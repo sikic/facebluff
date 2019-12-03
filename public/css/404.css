@@ -1,0 +1,16 @@
+body{
+    background: url(/img/404.png);
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+div{
+    width: 50%;
+    margin-top: 27.5%;
+    margin-left: 50%;
+}
+
+h1{
+    color: white;
+    font-size: 4em;
+}

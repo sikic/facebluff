@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/amigos.css">
+    <script src="https://kit.fontawesome.com/d089f45b77.js" crossorigin="anonymous"></script>
+    <title>Solicitudes</title>
+</head>
+
+
+
+    <body>
+    <%- include("header",{points : 100}) %>
+    <div class="solicitudes centro">
+        <h1>Solicitudes de amistad</h1>
+    </div>
+
+    <% if(usuarios.length == 0){ %>
+    <div class=" amigos centro">
+        <h2>No tienes solicitudes pendientes <i class="fas fa-heart-broken"></i></h2>
+    </div>
+    <% } else{%>
+    <div>
+
+        <% usuarios.forEach(elm=>{ %>
+        <div class="usuario">
+            <img src="../img/<%= elm.fotoPerfil %>" alt="" class="fotoPerfil">
+            <span> <%= elm.nombre %></span>
+            <div id="botones">
+                <a href="">Aceptar</a>
+                <a href="">Rechazar</a>
+            </div>
+        </div>
+
+        <% }); %>
+    </div>
+    <% } %>
+
+    <div class="busqueda centro">
+        <h1>Búsqueda de amigos</h1>
+    </div>
+
+    <div class="barra">
+        <form action="/procesarBusqueda" method="get">
+            Buscar por nombre: <input type="search" name="busqueda">
+           <input type="submit" value="aceptar">
+        </form>
+    </div>
+
+    <div class="amigos centro">
+        <h1>Mis amigos</h1>
+    </div>
+
+    <% if(amigos.length == 0){ %>
+        <div class=" amigos notiene">
+            <h2>No tienes amigos actualmente <i class="fas fa-heart-broken"></i></h2>
+        </div>
+        <% } else{%>
+    <div class="lista_amigos">
+        <% amigos.forEach(e=>{ %>
+        <div>
+            <img src="../img/<%= e.fotoPerfil %>" alt="" class="fotoPerfil">
+            <span> <%= e.nombre %></span>
+        </div>
+
+        <% }); %>
+    </div>
+    <% } %>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css?family=Patrick+Hand&display=swap');
+* {
+    /* border: 1px solid red;     */
+    margin: 0;
+    padding: 0;
+    font-family: 'Patrick Hand', cursive;
+}
+
+header {
+    background: rgb(80, 24, 24);
+    display: flex;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 0.5%;
+}
+
+
+.logo {
+    content: url(../img/uchiha.png);
+    width: 5%;
+    margin-bottom: 0.4em;
+    display: flex;
+    justify-content: center;
+}
+
+.logo:hover {
+    -webkit-animation: rotation 0.5s linear;
+}
+/*rotacion del logo*/
+@-webkit-keyframes rotation {
+    from {
+        -webkit-transform: rotate(359deg);
+    }
+    to {
+        -webkit-transform: rotate(0deg);
+    }
+}
+
+.menu {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+    font-size: 1.25em;
+}
+
+a:hover,input[type="submit"]:hover {
+    background-color: rgb(22, 6, 51) !important;
+    animation: shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
+    transform: translate3d(0, 0, 0);
+}
+/* movimiento de los botones */
+@keyframes shake {
+    10%, 90% {
+        transform: translate3d(-2px, 0, 0);
+    }
+    20%, 80% {
+        transform: translate3d(5px, 0, 0);
+    }
+    30%, 50%, 70% {
+        transform: translate3d(-5px, 0, 0);
+    }
+    40%, 60% {
+        transform: translate3d(5px, 0, 0);
+    }
+}
+a {
+    background-color: rgb(25, 25, 26) !important;
+    border: 2px solid white;
+    padding: 0.2em;
+    margin-left: 0.5em;
+}

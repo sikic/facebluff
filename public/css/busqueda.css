@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css?family=Patrick+Hand&display=swap');
+
+*{
+    /* border: 1px solid red; */
+    margin: 0;
+    padding: 0;
+    font-family: 'Patrick Hand', cursive;
+}
+body{
+    background-image: url(../img/fondo.jpg);
+}
+
+.menu{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+
+h1{
+    font-weight: bold;
+}
+li{
+    list-style: none;
+}
+
+.centro{
+    width: 30%;
+    margin-top: 11.5%;
+    margin-left: 35% ;
+    margin-right: auto;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+.fotoPerfil{
+    width: 7%;
+    height: 5%;
+    border: 2px solid black;
+    margin-left: 10%; 
+}
+.usuario span{
+    font-size: 1.7em;
+    width: 50%;
+    font-family: 'Patrick Hand', cursive;
+}
+
+
+div[id^="usuario"]  {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+
+
+
+

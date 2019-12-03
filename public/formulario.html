@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/formulario.css">
+    <title>Red Social</title>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">
+
+        </div>
+
+        <div class="menu">
+            <a href="/login">Entrar</a>
+            <a href="formulario.html">Nuevo usuario</a>
+        </div>
+
+    </header>
+    <div class="principal">
+
+        <div class="nuevo">
+            <h2>NUEVO USUARIO</h2>
+        </div>
+
+        <form action="procesar_post" method="POST">
+            <div class="formulario">
+                <div class="texto">
+                    <div>
+                        <label >Email:</label>
+                        <input type="email" name="email">
+                    </div>
+
+                    <div>
+                        <label>Contraseña:</label>
+                        <input type="password" name="contraseña">
+                    </div>
+
+                    <div>
+                        <label>Nombre: </label>
+                        <input type="text" name="nombre">
+                    </div>
+
+                    <div id="sexo">
+                        <label>Sexo:</label>
+                        <input type="radio" name="s" value="Masculino">
+                        <label>Masculino</label>
+                        <input type="radio" name="s" value="Femenino">
+                        <label>Femenino</label>
+
+                    </div>
+
+                    <div>
+                        <label>Fecha de nacimiento</label>
+                        <input type="date" name="fechaNacimiento" value="null">
+                    </div>
+                    <div>
+                        <label>Imagen de perfil:</label>
+                        <input type="file" name="fotoPerfil" value="null">
+
+                    </div>
+                    <div class="enviar">
+                        <input type="submit" value="enviar">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

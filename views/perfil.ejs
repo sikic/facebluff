@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/perfil.css">
+    <title>Perfil</title>
+</head>
+
+<body>
+
+    <body>
+
+        <%- include("header",{points : 100}) %>
+        <div class="centro">
+            <% if(usuario.fotoPerfil != null){ %>
+            <div class="tuperfil">
+                <h1>Tu Perfil</h1>
+            </div>
+            <% }%>
+            <div class="datos">
+
+                <img src="../img/<%= usuario.fotoPerfil %>" alt="">
+                <% if(usuario.length != 0){ %>
+                <div class="usuario">
+                    <div class="Nombre"><%= usuario.nombre %></div>
+                    <div> <%= usuario.fechaNacimiento %> años</div>
+                    <div>Hombre </div>
+                    <div> <%= usuario.puntos %> puntos</div>
+                </div>
+                <% } %>
+            </div>
+            <div class="Boton"> <a href="" class="modificar">Modificar perfil</a></div>
+        </div>
+    </body>
+
+</html>

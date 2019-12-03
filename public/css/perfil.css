@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css?family=Patrick+Hand&display=swap');
+* {
+    /* border: 1px solid red;    */
+    margin: 0;
+    padding: 0;
+    font-family: 'Patrick Hand', cursive;
+}
+
+body {
+    background-image: url(../img/fondo.jpg);
+}
+
+
+li {
+    list-style: none;
+}
+
+li:hover() {
+    background: red;
+}
+
+.centro {
+    width: 40%;
+    margin-top: 12.5%;
+    margin-left: 30%;
+    margin-right: auto;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.tuperfil {
+    display: flex;
+    justify-content: center;
+    background: gray;
+    padding-left: 1em;
+    border: 2px dashed black;
+    margin-bottom: 6%;
+    font-size: 0.75em;
+}
+
+.datos {
+    display: flex;
+}
+
+.datos img {
+    width: 50%;
+    border: 2px solid black;
+}
+
+a {
+    background-color: rgb(25, 25, 26) !important;
+    border: 2px solid white;
+    padding: 0.2em;
+    margin-left: 0.5em;
+}
+
+.Boton {
+    display: flex;
+    justify-content: center;
+}
+
+
+
+.usuario {
+    font-weight: bold;
+    font-size: 2em;
+}
+
+.modificar {
+    margin-top: 1em;
+}

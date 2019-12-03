@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css?family=Patrick+Hand&display=swap');
+* {
+     /* border: 1px solid red;    */
+    margin: 0;
+    padding: 0;
+    font-family: 'Patrick Hand', cursive;
+}
+
+body {
+    background-image: url(../img/fondo.jpg);
+}
+
+.menu {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+h1 {
+    font-weight: bold;
+}
+
+li {
+    list-style: none;
+}
+
+.centro {
+    width: 30%;
+    margin-top: 12.5%;
+    margin-left: 35%;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.fotoPerfil {
+    width: 7%;
+    height: 5%;
+    border: 2px solid black;
+    margin-left: 10%;
+}
+
+.usuario span {
+    font-size: 1.7em;
+    width: 50%;
+}
+
+.usuario {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.busqueda {
+    margin-top: 1.5%;
+}
+
+.amigos {
+    margin-top: 1.5%;
+}
+
+h2 {
+    color: rgb(109, 4, 4);
+}
+
+.barra {
+    font-size: 1.5em;
+    /* display: flex;
+    align-items: center; */
+}
+
+.barra input[type="search"] {
+    width: 70%;
+    height: 2em;
+    font-size: 0.75em;
+    border-radius: 15px;
+    margin-left: 1%;
+}
+
+input[type="submit"]{
+    width: 10%;
+    height: 2em;
+    background-color: rgb(77, 0, 128);
+    font-size: 0.75em;
+    border-radius: 15px;
+    margin-left: 1%;
+}
+
+.barra a {
+    font-size: 1em;
+}
+
+.lista_amigos div {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    font-size: 1.7em;
+    margin-left: 2%;
+}
+
+.lista_amigos span {
+    width: 30%;
+    margin-left: 2%;
+}
+
+.notiene {
+    color: red;
+    margin-left: 20%; 
+}
+
+
