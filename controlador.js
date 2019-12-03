@@ -13,7 +13,7 @@ function login(request, response) {
 }
 
 function amigos(request, response) {
-    //PRUEBAA
+    //PRUEBAALLLLL
 
     mod.getSolicitudes(request.session.currentUser, function (err, resultado) {
         if (err)
