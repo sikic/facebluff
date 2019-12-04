@@ -240,5 +240,22 @@ class modelo {
             }
         });
     }
+
+    viewReplys(id,callback){
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err,null);
+            else {
+                var sql = "SELECT r.id,r.descripcion FROM respuesta r WHERE r.idPregunta = ?";
+                var params = id;
+                connection.query(sql, params, function (err, resultado) {
+                    if (err)
+                        callback(err,null);
+                    else
+                        callback(null,resultado);
+                });
+            }
+        });
+    }
 }
 module.exports = modelo;

@@ -162,6 +162,16 @@ function preguntasRandom(request,response){
         }
     });
 }
+
+function viewQuestion(request,response){
+    mod.viewReplys(request.params.id,function(err,resultado){
+        if(err)
+            console.log(err);
+        else{
+            response.render("");
+        }
+    });
+}
 module.exports = {
     log: login,
     log_post: check,
@@ -174,5 +184,6 @@ module.exports = {
     solicitar_Amistad:solicitarAmistad,
     aceptar_Amistad:aceptarAmistad,
     rechazar_Amistad : rechazarAmistad,
-    preguntasAleatorias : preguntasRandom
+    preguntasAleatorias : preguntasRandom,
+    verPregunta:viewQuestion
 }
