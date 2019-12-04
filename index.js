@@ -21,7 +21,8 @@ const sessionStore = new MySQLStore({
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    store: sessionStore
 }));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));

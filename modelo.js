@@ -64,30 +64,19 @@ class modelo {
             if (err)
                 callback(err, null);
             else {
-                var sql = "SELECT idUsuario2 FROM solicitudes WHERE idUsuario1 = ?";
+                var sql = "SELECT u.nombre,u.fotoPerfil,s.idUsuario2 FROM usuarios u INNER JOIN solicitudes s ON u.id = s.idUsuario2 WHERE s.idUsuario1 = ? ";
                 var params = id;
                 connection.query(sql, params, function (err, result) {
                     connection.release();
                     if (err)
                         callback(err, null);
-                    else if (result.length == 0)
-                        callback(null, null);
                     else {
-                        var params2 = [];
-                        var sql2 = "SELECT u.nombre,u.fotoPerfil FROM usuarios u WHERE id = ?";
-                        result.forEach(e=>{
-                            params2.push(e.idUsuario2);
-                        });
-                        connection.query(sql2, params2, function (err, resultado) {
-                            if (err)
-                                callback(err);
-                            else {
-                                var rs = [];
-                                resultado.forEach((elm,i) => {
+                        var rs = [];
+                        resultado.forEach((elm,i) => {
                                     var ar = {
                                         nombre: elm.nombre,
                                         fotoPerfil: elm.fotoPerfil,
-                                        id:params2[i]
+                                        id:elm.idUsuario2
                                     }
                                     rs.push(ar);
                                 });
@@ -97,7 +86,6 @@ class modelo {
                     }
                 });
             }
-        });
     }
 
     getFriends(id,callback){
