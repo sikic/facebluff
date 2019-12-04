@@ -102,7 +102,6 @@ function formulario_post(request, response) {
             console.log(err.message);
         else {
             response.status(200);
-            console.log(resultado);
             request.session.currentUser = resultado;
             //let edad = Date.now() - usuarioNuevo.fechaNacimiento.getTime();
             //let anios = Math.round(edad / (1000 * 60 * 60 * 24) / 31 / 12);
@@ -122,6 +121,37 @@ function busqueda(request,response){
         }
     });
 }
+
+function solicitarAmistad(request,response){
+    mod.addSolicitud(request.session.currentUser, request.params.id,function(err){
+        if(err)
+            console.log(err.message);
+        else{
+            response.redirect("/amigos");
+        }
+    });
+}
+
+function aceptarAmistad(request,response){
+    mod.aceptarSolicitud(request.session.currentUser, request.params.id,function(err){
+        if(err)
+            console.log(err.message);
+        else{
+            response.redirect("/amigos");
+        }
+    });
+}
+
+function rechazarAmistad(request,response){
+    mod.rechazarSolicitud(request.session.currentUser, request.params.id,function(err){
+        if(err)
+            console.log(err.message);
+        else{
+            console.log("rechazada");
+            response.redirect("/amigos");
+        }
+    }); 
+}
 module.exports = {
     log: login,
     log_post: check,
@@ -130,5 +160,8 @@ module.exports = {
     friends: amigos,
     estaLogeado: comprobar,
     buscar : busqueda,
-    exit :salir
+    exit :salir,
+    solicitar_Amistad:solicitarAmistad,
+    aceptar_Amistad:aceptarAmistad,
+    rechazar_Amistad : rechazarAmistad
 }

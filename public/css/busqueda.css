@@ -45,6 +45,9 @@ li{
     font-family: 'Patrick Hand', cursive;
 }
 
+.botones a:visited{
+    background: green;
+}
 
 div[id^="usuario"]  {
     display: flex;

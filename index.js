@@ -51,6 +51,11 @@ app.use(controlador.estaLogeado);
 app.get("/amigos",controlador.friends);
 app.get("/procesarBusqueda", controlador.buscar);
 app.get("/log_out",controlador.exit);
+app.get("/procesar_solicitud/:id",controlador.solicitar_Amistad);
+app.get("/aceptar/:id",controlador.aceptar_Amistad);
+app.get("/rechazar/:id",controlador.rechazar_Amistad);
+
+
 
 //-----
 //vista de perfil
