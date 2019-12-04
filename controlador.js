@@ -152,6 +152,16 @@ function rechazarAmistad(request,response){
         }
     }); 
 }
+
+function preguntasRandom(request,response){
+    mod.randomQuestions(function(err,resultado){
+        if(err)
+            console.log(err.message);
+        else{
+            response.render("listadoPreguntas",{preguntas:resultado});
+        }
+    });
+}
 module.exports = {
     log: login,
     log_post: check,
@@ -163,5 +173,6 @@ module.exports = {
     exit :salir,
     solicitar_Amistad:solicitarAmistad,
     aceptar_Amistad:aceptarAmistad,
-    rechazar_Amistad : rechazarAmistad
+    rechazar_Amistad : rechazarAmistad,
+    preguntasAleatorias : preguntasRandom
 }

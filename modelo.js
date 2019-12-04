@@ -214,5 +214,31 @@ class modelo {
             }
         });
     }
+
+    randomQuestions(callback){
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err,null);
+            else {
+                var sql = "SELECT pregunta.id,pregunta.descripcion FROM pregunta ORDER BY RAND() LIMIT ?";
+                var params = 5;
+                connection.query(sql, params, function (err, resultado) {
+                    if (err)
+                        callback(err,null);
+                    else{
+                        var rs = [];
+                        resultado.forEach(e=>{
+                            var ar = {
+                                descripcion:e.descripcion,
+                                id:e.id
+                            }
+                            rs.push(ar);
+                        });
+                        callback(null,rs);
+                    }
+                });
+            }
+        });
+    }
 }
 module.exports = modelo;

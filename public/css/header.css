@@ -74,7 +74,7 @@ a:hover,input[type="submit"]:hover {
     }
 }
 a {
-    background-color: rgb(25, 25, 26) !important;
+    background-color: rgb(25, 25, 26);
     border: 2px solid white;
     padding: 0.2em;
     margin-left: 0.5em;

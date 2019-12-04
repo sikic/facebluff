@@ -54,6 +54,12 @@ app.get("/log_out",controlador.exit);
 app.get("/procesar_solicitud/:id",controlador.solicitar_Amistad);
 app.get("/aceptar/:id",controlador.aceptar_Amistad);
 app.get("/rechazar/:id",controlador.rechazar_Amistad);
+app.get("/preguntas",controlador.preguntasAleatorias);
+app.get("/newQuestion",controlador.preguntasAleatorias);//fran
+app.get("/viewQuestion/:id",controlador.verPregunta);
+
+
+
 
 
 
