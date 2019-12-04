@@ -21,8 +21,8 @@ const sessionStore = new MySQLStore({
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
-    saveUninitialized: true,
-    store: sessionStore
+    saveUninitialized: true
+    // store: sessionStore
 }));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -36,12 +36,12 @@ app.use(express.static(ficherosEstaticos));
 
 //se encarga de mostrar el formulario de login
 app.get("/login", controlador.log);
-
+app.get("/formulario", controlador.mostrarform);
 
 //coge los datos y comprueba si el usuario y la password estan bien
 app.post("/login_post",controlador.log_post);
 
-app.post("/formulario", controlador.mostrarform);
+
 app.post("/procesar_post",controlador.formulario);
 //funcion que no permite el paso a el resto de funciones
 app.use(controlador.estaLogeado);

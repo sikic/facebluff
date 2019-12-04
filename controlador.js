@@ -102,18 +102,28 @@ function formulario_post(request, response) {
         puntos: 0
     }
 
+    if(request.session.currentUser === undefined || request.session.currentUser == -1 ){
     mod.insertUser(usuarioNuevo, function (err, resultado) {
         if (err)
             console.log(err.message);
         else {
             response.status(200);
             request.session.currentUser = resultado;
-            //let edad = Date.now() - usuarioNuevo.fechaNacimiento.getTime();
-            //let anios = Math.round(edad / (1000 * 60 * 60 * 24) / 31 / 12);
-            //usuarioNuevo.fechaNacimiento = anios;
             response.render("perfil", { usuario: usuarioNuevo })
         }
     });
+    }
+ else{
+     usuarioNuevo.id = request.session.currentUser;
+     mod.modificarUser(usuarioNuevo,function(err,resultado){
+        if(err)
+            console.log(err.message);
+        else{
+            response.status(200);
+            response.render("perfil", { usuario: usuarioNuevo })
+        }
+     });
+ }
 }
 
 function busqueda(request,response){
