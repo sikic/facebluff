@@ -6,7 +6,17 @@ const app = express();
 const controlador = require("./controlador");
 const ficherosEstaticos = path.join(__dirname, "public");
 const session = require('express-session');
+const config = require("./config");
 const expressValidator = require("express-validator");
+
+//sesiones
+const mysqlSession = require("express-mysql-session");
+const MySQLStore = mysqlSession(session);
+const sessionStore = new MySQLStore({
+    host: config.mysqlConfig.host,
+    user: config.mysqlConfig.user,
+    password: config.mysqlConfig.password,
+    database: config.mysqlConfig.database });
 
 app.use(session({
     secret: 'keyboard cat',
