@@ -51,9 +51,9 @@ class modelo {
                 connection.query(sql, params, function (err, resul) {
                     connection.release();
                     if (err)
-                        callback(err, resul.insertId);
+                        callback(err,null);
                     else
-                        callback(null, null);
+                        callback(null, resul.insertId);
                 });
             }
         });

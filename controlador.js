@@ -102,6 +102,7 @@ function formulario_post(request, response) {
             console.log(err.message);
         else {
             response.status(200);
+            console.log(resultado);
             request.session.currentUser = resultado;
             //let edad = Date.now() - usuarioNuevo.fechaNacimiento.getTime();
             //let anios = Math.round(edad / (1000 * 60 * 60 * 24) / 31 / 12);
