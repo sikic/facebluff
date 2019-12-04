@@ -114,6 +114,7 @@ function formulario_post(request, response) {
     });
     }
  else{
+     //
      usuarioNuevo.id = request.session.currentUser;
      mod.modificarUser(usuarioNuevo,function(err,resultado){
         if(err)
