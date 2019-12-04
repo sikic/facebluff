@@ -36,9 +36,13 @@ app.use(express.static(ficherosEstaticos));
 
 //se encarga de mostrar el formulario de login
 app.get("/login", controlador.log);
+
+
 //coge los datos y comprueba si el usuario y la password estan bien
 app.post("/login_post",controlador.log_post);
-app.post("/procesar_post", controlador.formulario);
+
+app.post("/formulario", controlador.mostrarform);
+app.post("/procesar_post",controlador.formulario);
 //funcion que no permite el paso a el resto de funciones
 app.use(controlador.estaLogeado);
 
@@ -56,7 +60,7 @@ app.get("/aceptar/:id",controlador.aceptar_Amistad);
 app.get("/rechazar/:id",controlador.rechazar_Amistad);
 app.get("/preguntas",controlador.preguntasAleatorias);
 app.get("/newQuestion",controlador.preguntasAleatorias);//fran
-app.get("/viewQuestion/:id",controlador.verPregunta);
+// app.get("/viewQuestion/:id",controlador.verPregunta);
 
 
 

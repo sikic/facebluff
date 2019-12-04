@@ -29,6 +29,11 @@ function amigos(request, response) {
         }
     });
 }
+function mostrarFormulario(request,response){
+    var usuarioLog = true;
+    if(request.session.currentUser === undefined || request.session.currentUser == -1 ) usuarioLog = false;
+    response.render("formulario", {usuarioLogeado : usuarioLog});
+}
 
 function comprobar(request, response, next) {
     // Comprueba si el usuario esta logeado
@@ -174,5 +179,6 @@ module.exports = {
     solicitar_Amistad:solicitarAmistad,
     aceptar_Amistad:aceptarAmistad,
     rechazar_Amistad : rechazarAmistad,
-    preguntasAleatorias : preguntasRandom
+    preguntasAleatorias : preguntasRandom,
+    mostrarform : mostrarFormulario 
 }

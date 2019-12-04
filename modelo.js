@@ -58,6 +58,22 @@ class modelo {
             }
         });
     }
+    modificarUser(data,callback){
+        this.pool.getConnection(function(err,connection){
+            if(err)
+            callback(err);
+            else{
+            var sql = "UPDATE usuarios SET nombre = ?,email = ?,contraseña = ?,fechaNacimiento = ? ,sexo = ?,fotoPerfil = ? WHERE id = ?";
+            var params = [data.nombre,data.email,data.contraseña,data.fechaNacimiento,data.sexo,data.fotoPerfil, data.id];
+            connection.query(sql,params,function(err,resul){
+                if(err)
+                callback(err);
+                else
+                callback(null);
+            });
+        }
+    });
+}
     //----------------------------------------
     getSolicitudes(id, callback) {
         this.pool.getConnection(function (err, connection) {
