@@ -180,11 +180,12 @@ function preguntasRandom(request,response){
 }
 
 function viewQuestion(request,response){
+    console.log(request.params.ask + "  " + request.params.id);
     mod.viewReplys(request.params.id,function(err,resultado){
         if(err)
             console.log(err);
         else{
-            response.render("");
+            response.render("responder_mi_mismo",{pregunta:request.params.ask,respuestas:resultado});
         }
     });
 }

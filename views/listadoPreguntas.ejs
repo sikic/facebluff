@@ -20,9 +20,9 @@
         </div>
 
         <div class="principal">
-        <% preguntas.forEach(elm =>{ %>
+        <% preguntas.forEach(e =>{ %>
                 <div class="preguntas">
-                    <a href="/viewQuestion/<%= elm.id %>" class="texto"><%= elm.descripcion %> </a> 
+                    <a href="/viewQuestion/<%= e.descripcion %> / <%= e.id %>" class="texto"><%= e.descripcion %> </a> 
                 </div>
         <% }); %>
 

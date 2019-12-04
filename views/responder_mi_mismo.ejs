@@ -13,43 +13,26 @@
 
     <body>
 
-       <%- include("header",{points:100}) %>
+        <%- include("header",{points:100}) %>
 
         <div class="titulo centro">
-            <h1>¿Nintento Swicth ,PS4 o Xbox One?</h1>
+            <h1><%= pregunta %></h1>
         </div>
 
         <div class="principal">
+            <% if(respuestas.length == 0){ %>
+            <h2>No tienes solicitudes pendientes <i class="fas fa-heart-broken"></i></h2>
+            <% }else{ %>
+            <% respuestas.forEach(e=>{ %>
             <div class="respuestas">
                 <label>
                     <input type="radio">
-                    Nintento Swicth
+                    <%= e.descripcion %>
                 </label>
             </div>
-
-            <div class="respuestas">
-                <label>
-                    <input type="radio">
-                    PS4
-                </label>
-
-            </div>
-
-            <div class="respuestas">
-                <label>
-                    <input type="radio">
-                    Xbox One
-                </label>
-            </div>
-
-            <div class="respuestas">
-                <label>
-                    <input type="radio">
-                    No me interesan los videojuegos
-                </label>
-
-            </div>
-
+            <% }); %>
+            <% } %>
+            
             <div class="respuestas" id="otra">
                 <label>
                     <input type="radio">
