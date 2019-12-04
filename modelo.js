@@ -72,23 +72,23 @@ class modelo {
                         callback(err, null);
                     else {
                         var rs = [];
-                        resultado.forEach((elm,i) => {
-                                    var ar = {
-                                        nombre: elm.nombre,
-                                        fotoPerfil: elm.fotoPerfil,
-                                        id:elm.idUsuario2
-                                    }
-                                    rs.push(ar);
-                                });
-                                callback(null, rs);
+                        resultado.forEach((elm, i) => {
+                            var ar = {
+                                nombre: elm.nombre,
+                                fotoPerfil: elm.fotoPerfil,
+                                id: elm.idUsuario2
                             }
+                            rs.push(ar);
                         });
+                        callback(null, rs);
                     }
                 });
             }
+        });
     }
 
-    getFriends(id,callback){
+
+    getFriends(id, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err)
                 callback(err, null);
@@ -104,7 +104,7 @@ class modelo {
                     else {
                         var params2 = [];
                         var sql2 = "SELECT u.nombre,u.fotoPerfil FROM usuarios u WHERE id = ?";
-                        result.forEach(e=>{
+                        result.forEach(e => {
                             params2.push(e.usuario2);
                         });
                         connection.query(sql2, [params2], function (err, resultado) {
@@ -112,11 +112,11 @@ class modelo {
                                 callback(err);
                             else {
                                 var rs = [];
-                                resultado.forEach((elm,i) => {
+                                resultado.forEach((elm, i) => {
                                     var ar = {
                                         nombre: elm.nombre,
                                         fotoPerfil: elm.fotoPerfil,
-                                        id:params2[i]
+                                        id: params2[i]
                                     }
                                     rs.push(ar);
                                 });
@@ -129,27 +129,27 @@ class modelo {
         });
     }
 
-    search(cadena,callback){
-        this.pool.getConnection(function(err,connection){
-            if(err)
-                callback(err,null);
-            else{
+    search(cadena, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err, null);
+            else {
                 var sql = "SELECT u.nombre,u.fotoPerfil,u.id FROM usuarios u WHERE nombre LIKE ? ";
-                var params = "%"+cadena+"%";
-                connection.query(sql,params,function(err,resultado){
-                    if(err)
-                        callback(err,null);
-                    else{
+                var params = "%" + cadena + "%";
+                connection.query(sql, params, function (err, resultado) {
+                    if (err)
+                        callback(err, null);
+                    else {
                         var rs = [];
-                        resultado.forEach(elm=>{
+                        resultado.forEach(elm => {
                             var ar = {
-                                nombre:elm.nombre,
-                                fotoPerfil:elm.fotoPerfil,
-                                id:elm.id
+                                nombre: elm.nombre,
+                                fotoPerfil: elm.fotoPerfil,
+                                id: elm.id
                             }
                             rs.push(ar);
                         });
-                        callback(null,rs);
+                        callback(null, rs);
                     }
                 });
             }
