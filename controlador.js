@@ -200,7 +200,6 @@ module.exports = {
     aceptar_Amistad:aceptarAmistad,
     rechazar_Amistad : rechazarAmistad,
     preguntasAleatorias : preguntasRandom,
-    mostrarform : mostrarFormulario 
-    preguntasAleatorias : preguntasRandom,
+    mostrarform : mostrarFormulario,
     verPregunta:viewQuestion
 }
