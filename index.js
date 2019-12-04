@@ -38,6 +38,7 @@ app.use(express.static(ficherosEstaticos));
 app.get("/login", controlador.log);
 //coge los datos y comprueba si el usuario y la password estan bien
 app.post("/login_post",controlador.log_post);
+app.post("/procesar_post", controlador.formulario);
 //funcion que no permite el paso a el resto de funciones
 app.use(controlador.estaLogeado);
 
@@ -45,7 +46,6 @@ app.use(controlador.estaLogeado);
 
 //validador de datos
 // app.use(expressValidator());
-app.post("/procesar_post", controlador.formulario);
 
 //vista amigos
 app.get("/amigos",controlador.friends);

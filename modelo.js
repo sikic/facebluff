@@ -66,7 +66,7 @@ class modelo {
             else {
                 var sql = "SELECT u.nombre,u.fotoPerfil,s.idUsuario2 FROM usuarios u INNER JOIN solicitudes s ON u.id = s.idUsuario2 WHERE s.idUsuario1 = ? ";
                 var params = id;
-                connection.query(sql, params, function (err, result) {
+                connection.query(sql, params, function (err, resultado) {
                     connection.release();
                     if (err)
                         callback(err, null);
@@ -93,41 +93,31 @@ class modelo {
             if (err)
                 callback(err, null);
             else {
-                var sql = "SELECT usuario2 FROM amigos WHERE usuario1 = ?";
+                var sql = "SELECT u.nombre,u.fotoPerfil,a.usuario2 FROM usuarios u INNER JOIN amigos a ON u.id = a.usuario2 WHERE a.usuario1 = ? ";
                 var params = id;
-                connection.query(sql, [params], function (err, result) {
+                connection.query(sql, params, function (err, resultado) {
                     connection.release();
                     if (err)
                         callback(err, null);
-                    else if (result.length == 0)
-                        callback(null, null);
                     else {
-                        var params2 = [];
-                        var sql2 = "SELECT u.nombre,u.fotoPerfil FROM usuarios u WHERE id = ?";
-                        result.forEach(e => {
-                            params2.push(e.usuario2);
-                        });
-                        connection.query(sql2, [params2], function (err, resultado) {
-                            if (err)
-                                callback(err);
-                            else {
-                                var rs = [];
-                                resultado.forEach((elm, i) => {
-                                    var ar = {
-                                        nombre: elm.nombre,
-                                        fotoPerfil: elm.fotoPerfil,
-                                        id: params2[i]
-                                    }
-                                    rs.push(ar);
-                                });
-                                callback(null, rs);
+                        var rs = [];
+                        resultado.forEach((elm, i) => {
+                            var ar = {
+                                nombre: elm.nombre,
+                                fotoPerfil: elm.fotoPerfil,
+                                id: elm.idUsuario2
                             }
+                            rs.push(ar);
                         });
+                        callback(null, rs);
                     }
                 });
             }
         });
     }
+
+
+
 
     search(cadena, callback) {
         this.pool.getConnection(function (err, connection) {

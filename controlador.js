@@ -85,7 +85,7 @@ function e404(request, response, next) {
 
 function formulario_post(request, response) {
 
-    request.checkBody("email", "Falta rellenar el email").notEmpty();
+    // request.checkBody("email", "Falta rellenar el email").notEmpty();
 
     let usuarioNuevo = {
         nombre: request.body.nombre,
