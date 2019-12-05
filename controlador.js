@@ -13,7 +13,7 @@ function login(request, response) {
 }
 
 function amigos(request, response) {
-    //PRUEBAALLLLL
+    //PRUEBAASSSSSS
 
     mod.getSolicitudes(request.session.currentUser, function (err, resultado) {
         if (err)
@@ -28,6 +28,11 @@ function amigos(request, response) {
             });
         }
     });
+}
+function mostrarFormulario(request,response){
+    var usuarioLog = true;
+    if(request.session.currentUser === undefined || request.session.currentUser == -1 ) usuarioLog = false;
+    response.render("formulario", {usuarioLogeado : usuarioLog});
 }
 
 function comprobar(request, response, next) {
@@ -85,7 +90,7 @@ function e404(request, response, next) {
 
 function formulario_post(request, response) {
 
-    request.checkBody("email", "Falta rellenar el email").notEmpty();
+    // request.checkBody("email", "Falta rellenar el email").notEmpty();
 
     let usuarioNuevo = {
         nombre: request.body.nombre,
@@ -97,18 +102,29 @@ function formulario_post(request, response) {
         puntos: 0
     }
 
+    if(request.session.currentUser === undefined || request.session.currentUser == -1 ){
     mod.insertUser(usuarioNuevo, function (err, resultado) {
         if (err)
             console.log(err.message);
         else {
             response.status(200);
             request.session.currentUser = resultado;
-            //let edad = Date.now() - usuarioNuevo.fechaNacimiento.getTime();
-            //let anios = Math.round(edad / (1000 * 60 * 60 * 24) / 31 / 12);
-            //usuarioNuevo.fechaNacimiento = anios;
             response.render("perfil", { usuario: usuarioNuevo })
         }
     });
+    }
+ else{
+     //
+     usuarioNuevo.id = request.session.currentUser;
+     mod.modificarUser(usuarioNuevo,function(err,resultado){
+        if(err)
+            console.log(err.message);
+        else{
+            response.status(200);
+            response.render("perfil", { usuario: usuarioNuevo })
+        }
+     });
+ }
 }
 
 function busqueda(request,response){
@@ -121,6 +137,73 @@ function busqueda(request,response){
         }
     });
 }
+
+function solicitarAmistad(request,response){
+    mod.addSolicitud(request.session.currentUser, request.params.id,function(err){
+        if(err)
+            console.log(err.message);
+        else{
+            response.redirect("/amigos");
+        }
+    });
+}
+
+function aceptarAmistad(request,response){
+    mod.aceptarSolicitud(request.session.currentUser, request.params.id,function(err){
+        if(err)
+            console.log(err.message);
+        else{
+            response.redirect("/amigos");
+        }
+    });
+}
+
+function rechazarAmistad(request,response){
+    mod.rechazarSolicitud(request.session.currentUser, request.params.id,function(err){
+        if(err)
+            console.log(err.message);
+        else{
+            console.log("rechazada");
+            response.redirect("/amigos");
+        }
+    }); 
+}
+
+function preguntasRandom(request,response){
+    mod.randomQuestions(function(err,resultado){
+        if(err)
+            console.log(err.message);
+        else{
+            response.render("listadoPreguntas",{preguntas:resultado});
+        }
+    });
+}
+
+function viewQuestion(request,response){
+    mod.viewReplys(request.params.id, function (err, resultado) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            response.render("responderAmi", { pregunta: "request.params.id", respuestas: resultado, idPregunta: request.params.id });
+        }
+    });
+}
+
+function newReply(request, response) {
+    if (request.query.otra == "on") {
+        mod.addReply(request.query.nueva, request.params.id, function (err, resultado) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                response.redirect("/preguntas");
+            }
+        });
+    }
+        // mod.addReplytoTable(){
+}     
+        // }
 module.exports = {
     log: login,
     log_post: check,
@@ -129,5 +212,12 @@ module.exports = {
     friends: amigos,
     estaLogeado: comprobar,
     buscar : busqueda,
-    exit :salir
+    exit :salir,
+    solicitar_Amistad:solicitarAmistad,
+    aceptar_Amistad:aceptarAmistad,
+    rechazar_Amistad : rechazarAmistad,
+    preguntasAleatorias : preguntasRandom,
+    mostrarform : mostrarFormulario,
+    verPregunta:viewQuestion,
+    addReply:newReply
 }

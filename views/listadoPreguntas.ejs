@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/listadoPreguntas.css">
+    <title>Listado_Preguntas</title>
+</head>
+
+<body>
+
+    <body>
+
+       <%- include("header",{points : 100}) %>
+
+        <div class="titulo centro">
+            <h1>Preguntas seleccionadas aleatoriamente</h1>
+        </div>
+
+        <div class="principal">
+        <% preguntas.forEach(e => { %>
+                <div class="preguntas">
+                    <a href="/viewQuestion/<%= e.id%>" class="texto"> <%= e.descripcion %> </a> 
+                </div>
+        <% } ); %>
+
+            <div class="subtitulo">
+                <h1>
+                    ¡Añade tus preguntas!
+                </h1>
+            </div>
+
+            <div class="boton">
+                <a href="/newQuestion">Crear nueva pregunta</a>
+            </div>
+
+        </div>
+
+
+    </body>
+
+</html>

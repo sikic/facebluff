@@ -51,88 +51,161 @@ class modelo {
                 connection.query(sql, params, function (err, resul) {
                     connection.release();
                     if (err)
-                        callback(err, resul.insertId);
+                        callback(err, null);
                     else
-                        callback(null, null);
+                        callback(null, resul.insertId);
                 });
             }
         });
     }
+    modificarUser(data,callback){
+        this.pool.getConnection(function(err,connection){
+            if(err)
+            callback(err);
+            else{
+            var sql = "UPDATE usuarios SET nombre = ?,email = ?,contraseña = ?,fechaNacimiento = ? ,sexo = ?,fotoPerfil = ? WHERE id = ?";
+            var params = [data.nombre,data.email,data.contraseña,data.fechaNacimiento,data.sexo,data.fotoPerfil, data.id];
+            connection.query(sql,params,function(err,resul){
+                if(err)
+                callback(err);
+                else
+                callback(null);
+            });
+        }
+    });
+}
     //----------------------------------------
     getSolicitudes(id, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err)
                 callback(err, null);
             else {
-                var sql = "SELECT idUsuario2 FROM solicitudes WHERE idUsuario1 = ?";
+                var sql = "SELECT DISTINCT u.nombre,u.fotoPerfil,s.idUsuario2 FROM usuarios u INNER JOIN solicitudes s ON u.id = s.idUsuario2 WHERE s.idUsuario1 = ? ";
                 var params = id;
-                connection.query(sql, params, function (err, result) {
+                connection.query(sql, params, function (err, resultado) {
                     connection.release();
                     if (err)
                         callback(err, null);
-                    else if (result.length == 0)
-                        callback(null, null);
                     else {
-                        var params2 = [];
-                        var sql2 = "SELECT u.nombre,u.fotoPerfil FROM usuarios u WHERE id = ?";
-                        result.forEach(e=>{
-                            params2.push(e.idUsuario2);
-                        });
-                        connection.query(sql2, params2, function (err, resultado) {
-                            if (err)
-                                callback(err);
-                            else {
-                                var rs = [];
-                                resultado.forEach((elm,i) => {
-                                    var ar = {
-                                        nombre: elm.nombre,
-                                        fotoPerfil: elm.fotoPerfil,
-                                        id:params2[i]
-                                    }
-                                    rs.push(ar);
-                                });
-                                callback(null, rs);
+                        var rs = [];
+                        resultado.forEach((elm, i) => {
+                            var ar = {
+                                nombre: elm.nombre,
+                                fotoPerfil: elm.fotoPerfil,
+                                id: elm.idUsuario2
                             }
+                            rs.push(ar);
                         });
+                        callback(null, rs);
                     }
                 });
             }
         });
     }
 
-    getFriends(id,callback){
+
+    getFriends(id, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err)
                 callback(err, null);
             else {
-                var sql = "SELECT usuario2 FROM amigos WHERE usuario1 = ?";
+                //falla que solo se muestra la amistad en uno de los amigos , en el otro no
+                var sql = "SELECT DISTINCT u.nombre,u.fotoPerfil,a.usuario2 FROM usuarios u INNER JOIN amigos a ON u.id = a.usuario1 WHERE a.usuario2 = ? ";
                 var params = id;
-                connection.query(sql, [params], function (err, result) {
+                connection.query(sql, params, function (err, resultado) {
                     connection.release();
                     if (err)
                         callback(err, null);
-                    else if (result.length == 0)
-                        callback(null, null);
                     else {
-                        var params2 = [];
-                        var sql2 = "SELECT u.nombre,u.fotoPerfil FROM usuarios u WHERE id = ?";
-                        result.forEach(e=>{
-                            params2.push(e.usuario2);
+                        var rs = [];
+                        resultado.forEach((elm, i) => {
+                            var ar = {
+                                nombre: elm.nombre,
+                                fotoPerfil: elm.fotoPerfil,
+                                id: elm.idUsuario2
+                            }
+                            rs.push(ar);
                         });
-                        connection.query(sql2, [params2], function (err, resultado) {
+                        callback(null, rs);
+                    }
+                });
+            }
+        });
+    }
+
+
+
+
+    search(cadena, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err, null);
+            else {
+                var sql = "SELECT u.nombre,u.fotoPerfil,u.id FROM usuarios u WHERE nombre LIKE ? ";
+                var params = "%" + cadena + "%";
+                connection.query(sql, params, function (err, resultado) {
+                    if (err)
+                        callback(err, null);
+                    else {
+                        var rs = [];
+                        resultado.forEach(elm => {
+                            var ar = {
+                                nombre: elm.nombre,
+                                fotoPerfil: elm.fotoPerfil,
+                                id: elm.id
+                            }
+                            rs.push(ar);
+                        });
+                        callback(null, rs);
+                    }
+                });
+            }
+        });
+    }
+
+    addSolicitud(idSolicitante, idSolicitado, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err);
+            else {
+                var sql = "INSERT INTO solicitudes VALUES (?,?) ";
+                var params = [idSolicitado, idSolicitante];
+                connection.query(sql, params, function (err, result) {
+                    if (err)
+                        callback(err);
+                    else
+                        callback(null);
+                });
+            }
+        });
+    }
+
+    aceptarSolicitud(idSolicitante, idSolicitado, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err);
+            else {
+                var sql = "DELETE FROM solicitudes   WHERE solicitudes.idUsuario2 = ?  AND solicitudes.idUsuario1 = ?";
+                var params = [idSolicitado, idSolicitante];
+                connection.query(sql, params, function (err, result) {
+                    if (err)
+                        callback(err);
+                    else {
+                        var sql2 = "INSERT INTO amigos VALUES (?,?) ";
+                        var params2 = [idSolicitado, idSolicitante];
+                        connection.query(sql2, params2, function (err, result) {
                             if (err)
                                 callback(err);
                             else {
-                                var rs = [];
-                                resultado.forEach((elm,i) => {
-                                    var ar = {
-                                        nombre: elm.nombre,
-                                        fotoPerfil: elm.fotoPerfil,
-                                        id:params2[i]
+                                var sql3 = "INSERT INTO amigos VALUES (?,?) ";
+                                var params3 = [idSolicitante, idSolicitado];
+                                connection.query(sql3, params3, function (err, result) {
+                                    if (err)
+                                        callback(err);
+                                    else {
+                                        callback(null);
                                     }
-                                    rs.push(ar);
                                 });
-                                callback(null, rs);
                             }
                         });
                     }
@@ -141,23 +214,39 @@ class modelo {
         });
     }
 
-    search(cadena,callback){
-        this.pool.getConnection(function(err,connection){
-            if(err)
+    rechazarSolicitud(idSolicitante, idSolicitado, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err);
+            else {
+                var sql = "DELETE FROM solicitudes WHERE solicitudes.idUsuario2 = ?  AND solicitudes.idUsuario1 = ?";
+                var params = [idSolicitado, idSolicitante];
+                connection.query(sql, params, function (err, result) {
+                    if (err)
+                        callback(err);
+                    else
+                        callback(null);
+                });
+            }
+        });
+    }
+
+    randomQuestions(callback){
+        this.pool.getConnection(function (err, connection) {
+            if (err)
                 callback(err,null);
-            else{
-                var sql = "SELECT u.nombre,u.fotoPerfil,u.id FROM usuarios u WHERE nombre LIKE ? ";
-                var params = "%"+cadena+"%";
-                connection.query(sql,params,function(err,resultado){
-                    if(err)
+            else {
+                var sql = "SELECT pregunta.id,pregunta.descripcion FROM pregunta ORDER BY RAND() LIMIT ?";
+                var params = 5;
+                connection.query(sql, params, function (err, resultado) {
+                    if (err)
                         callback(err,null);
                     else{
                         var rs = [];
-                        resultado.forEach(elm=>{
+                        resultado.forEach(e=>{
                             var ar = {
-                                nombre:elm.nombre,
-                                fotoPerfil:elm.fotoPerfil,
-                                id:elm.id
+                                descripcion:e.descripcion,
+                                id:e.id
                             }
                             rs.push(ar);
                         });
@@ -167,5 +256,57 @@ class modelo {
             }
         });
     }
+
+    viewReplys(id,callback){
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err,null);
+            else {
+                var sql = "SELECT r.id,r.descripcion FROM respuesta r WHERE r.idPregunta = ?";
+                var params = id;
+                connection.query(sql, params, function (err, resultado) {
+                    if (err)
+                        callback(err,null);
+                    else
+                        callback(null,resultado);
+                });
+            }
+        });
+    }
+
+    addReply(descripcion,idPregunta,callback){
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err);
+            else {
+                var sql = "INSERT INTO respuesta(descripcion,idPregunta) VALUES(?,?)";
+                var params = [descripcion, idPregunta];
+                connection.query(sql, params, function (err, resultado) {
+                    if (err)
+                        callback(err);
+                    else
+                        callback(null);
+                });
+            }
+        });
+    }
+
+    addReplytoTable(id,idRespuesta,idPregunta,callback){
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err);
+            else {
+                var sql = "INSERT INTO usuario_pregunta_respuesta VALUES(?,?,?)";
+                var params = [id,idRespuesta, idPregunta];
+                connection.query(sql, params, function (err, resultado) {
+                    if (err)
+                        callback(err);
+                    else
+                        callback(null);
+                });
+            }
+        });
+    }
 }
+
 module.exports = modelo;

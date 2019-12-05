@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/responderAmi.css">
+    <title>Responderme-a-mi-mismo</title>
+</head>
+
+<body>
+    <%- include("header",{points : 100}) %>
+
+    <div class="titulo centro">
+        <h1><%= pregunta %></h1>
+    </div>
+
+    <div class="principal">
+        <% if(respuestas.length == 0){ %>
+        <h2>La pregunta no tiene respuestas aún <i class="fas fa-heart-broken"></i></h2>
+        <% }else{ %>
+        <% respuestas.forEach(e=>{ %>
+        <div class="respuestas">
+            <label>
+                <input type="radio">
+                <%= e.descripcion %>
+            </label>
+        </div>
+        <% }); %>
+        <% } %>
+
+        <div class="respuestas" id="otra">
+            <form action="/newReply/<%= idPregunta %>" method="GET">
+                <input type="radio" name="otra">
+                <label>
+                    Otra:
+                </label>
+                <input type="text" name="nueva">
+            </div>
+                <div class="boton">
+                    <input type="submit" value="responder">
+                </div>
+            </form>
+</body>
+
+</html>

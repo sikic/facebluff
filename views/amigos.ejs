@@ -30,8 +30,8 @@
             <img src="../img/<%= elm.fotoPerfil %>" alt="" class="fotoPerfil">
             <span> <%= elm.nombre %></span>
             <div id="botones">
-                <a href="">Aceptar</a>
-                <a href="">Rechazar</a>
+                <a href="/aceptar/<%= elm.id %>">Aceptar</a>
+                <a href="/rechazar/<%= elm.id %>">Rechazar</a>
             </div>
         </div>
 
@@ -55,7 +55,7 @@
     </div>
 
     <% if(amigos.length == 0){ %>
-        <div class=" amigos notiene">
+        <div class=" amigos notiene centro">
             <h2>No tienes amigos actualmente <i class="fas fa-heart-broken"></i></h2>
         </div>
         <% } else{%>
@@ -63,7 +63,7 @@
         <% amigos.forEach(e=>{ %>
         <div>
             <img src="../img/<%= e.fotoPerfil %>" alt="" class="fotoPerfil">
-            <span> <%= e.nombre %></span>
+            <span> <a href="/perfil"><%= e.nombre %></a></span>
         </div>
 
         <% }); %>
