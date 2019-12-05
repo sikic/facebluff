@@ -45,6 +45,7 @@ app.use(controlador.estaLogeado);
 //validador de datos
 // app.use(expressValidator());
 //hola ruben
+//adios ruben
 //vista amigos
 app.get("/amigos",controlador.friends);
 app.get("/procesarBusqueda", controlador.buscar);
