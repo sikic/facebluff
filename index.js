@@ -69,12 +69,8 @@ app.get("/viewQuestion/:id",controlador.verPregunta);
 function error500(error, request, response, next) {
     // Código 500: Internal server error
     response.status(500);
-    response.render("error500", {
-        mensaje: error.message,
-        pila: error.stack
-    }
-    )
-};
+    response.render("error500", {mensaje: error.message,pila: error.stack});
+}
 
 //para el error 404
 app.use(controlador.error404);
