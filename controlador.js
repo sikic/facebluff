@@ -22,6 +22,8 @@ function amigos(request, response) {
                 if (err)
                     console.log(err.message);
                 else {
+                    console.log(amistades);
+                    console.log(resultado);
                     response.render("amigos", { usuarios: resultado, amigos: amistades });
                 }
             });
@@ -44,7 +46,16 @@ function comprobar(request, response, next) {
     }
 }
 function perfil(request, response) {
-    response.render("perfil", { message: null });
+    mod.getDataUser(request.params.id,function(err,resultado){
+        if(err)
+            console.log(err.message);
+        else{
+            console.log(resultado);
+            response.render("perfil",{usuario : resultado} );
+        }
+
+    });
+   
 }
 
 function salir(request, response) {
@@ -66,7 +77,7 @@ function check(request, response) {
             if (resultado != null) {
                 response.status(200);
                 request.session.currentUser = resultado.id;
-                response.render("perfil", { usuario: resultado })
+                response.redirect("/perfil/" + resultado.id);
             }
             else {
                 response.status(200);
@@ -108,7 +119,7 @@ function formulario_post(request, response) {
             else {
                 response.status(200);
                 request.session.currentUser = resultado;
-                response.render("perfil", { usuario: usuarioNuevo })
+                response.redirect("/perfil");
             }
         });
     }
@@ -120,7 +131,7 @@ function formulario_post(request, response) {
                 console.log(err.message);
             else {
                 response.status(200);
-                response.render("perfil", { usuario: usuarioNuevo })
+                response.redirect("/perfil");
             }
         });
     }
@@ -253,5 +264,6 @@ module.exports = {
     verPregunta: viewQuestion,
     addReply: newReply,
     newQuestion : showNewQuestion,
-    procesarNewQuestion:newQuestion
+    procesarNewQuestion:newQuestion,
+    mostrarPerfil : perfil
 }

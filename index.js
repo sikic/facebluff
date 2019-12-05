@@ -39,7 +39,8 @@ app.use(express.static(ficherosEstaticos));
 
 //Usamos el router1
 app.use(miRouter1);
-
+//vista de perfil
+app.get("/perfil/:id",controlador.mostrarPerfil);
 
 app.use(controlador.estaLogeado);
 
@@ -69,8 +70,7 @@ app.get("/procesarNewQuestion",controlador.procesarNewQuestion);
 
 
 //-----
-//vista de perfil
-//app.get("/perfil".controlador.)
+
 function error500(error, request, response, next) {
     // Código 500: Internal server error
     response.status(500);
