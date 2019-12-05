@@ -28,7 +28,7 @@
         <% usuarios.forEach(elm=>{ %>
         <div class="usuario">
             <img src="../img/<%= elm.fotoPerfil %>" alt="" class="fotoPerfil">
-            <span> <%= elm.nombre %></span>
+            <span> <a href="/perfil/<%= elm.id %>"><%= elm.nombre %></a></span>
             <div id="botones">
                 <a href="/aceptar/<%= elm.id %>">Aceptar</a>
                 <a href="/rechazar/<%= elm.id %>">Rechazar</a>
@@ -63,7 +63,7 @@
         <% amigos.forEach(e=>{ %>
         <div>
             <img src="../img/<%= e.fotoPerfil %>" alt="" class="fotoPerfil">
-            <span> <a href="/perfil"><%= e.nombre %></a></span>
+            <span> <a href="/perfil/<%= e.id %>"><%= e.nombre %></a></span>
         </div>
 
         <% }); %>

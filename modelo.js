@@ -122,7 +122,7 @@ class modelo {
                             var ar = {
                                 nombre: elm.nombre,
                                 fotoPerfil: elm.fotoPerfil,
-                                id: elm.idUsuario2
+                                id: elm.usuario2
                             }
                             rs.push(ar);
                         });
@@ -324,6 +324,39 @@ class modelo {
             }
         });
     }
-}
+    getDataUser(id,callback){
+        this.pool.getConnection(function(err,connection){
+            if(err)
+            callback(err,null);
+            else{
+                var sql = "SELECT u.nombre,u.fechaNacimiento,u.sexo,u.fotoPerfil,u.puntos  FROM usuarios u WHERE u.id = ?";
+                var params = id;
+                connection.query(sql,id,function(err,resultado){
+                    if (err)
+                    callback(err,null);
+                else{
+                    var rs;
+                        resultado.forEach(element => {
+                            let edad = Date.now() - element.fechaNacimiento.getTime();
+                            let anios = Math.round(edad / (1000 * 60 * 60 * 24) / 31 / 12);
+                            let genero;
+                            element.sexo == "masculino" ? genero = "Hombre" : genero = "Mujer";
+                            rs = {
+                                nombre: element.nombre,
+                                fechaNacimiento: anios,
+                                puntos: element.puntos,
+                                sexo: genero,
+                                fotoPerfil: element.fotoPerfil,
+                                id: element.id
+                            }
+                        });
+                        callback(null, rs);
 
+                }
+            });
+
+        }
+    });
+}
+}
 module.exports = modelo;
