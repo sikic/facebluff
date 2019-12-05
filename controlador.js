@@ -13,25 +13,25 @@ function login(request, response) {
 }
 
 function amigos(request, response) {
-    
+
     mod.getSolicitudes(request.session.currentUser, function (err, resultado) {
         if (err)
             console.log(err.message);
         else {
-            mod.getFriends(request.session.currentUser,function(err,amistades){
+            mod.getFriends(request.session.currentUser, function (err, amistades) {
                 if (err)
-                console.log(err.message);
-                else{
-                    response.render("amigos", { usuarios: resultado,amigos:amistades });
+                    console.log(err.message);
+                else {
+                    response.render("amigos", { usuarios: resultado, amigos: amistades });
                 }
             });
         }
     });
 }
-function mostrarFormulario(request,response){
+function mostrarFormulario(request, response) {
     var usuarioLog = true;
-    if(request.session.currentUser === undefined || request.session.currentUser == -1 ) usuarioLog = false;
-    response.render("formulario", {usuarioLogeado : usuarioLog});
+    if (request.session.currentUser === undefined || request.session.currentUser == -1) usuarioLog = false;
+    response.render("formulario", { usuarioLogeado: usuarioLog });
 }
 
 function comprobar(request, response, next) {
@@ -47,7 +47,7 @@ function perfil(request, response) {
     response.render("perfil", { message: null });
 }
 
-function salir(request, response){
+function salir(request, response) {
     request.session.currentUser = -1;
     response.redirect("/login");
 }
@@ -101,84 +101,84 @@ function formulario_post(request, response) {
         puntos: 0
     }
 
-    if(request.session.currentUser === undefined || request.session.currentUser == -1 ){
-    mod.insertUser(usuarioNuevo, function (err, resultado) {
+    if (request.session.currentUser === undefined || request.session.currentUser == -1) {
+        mod.insertUser(usuarioNuevo, function (err, resultado) {
+            if (err)
+                console.log(err.message);
+            else {
+                response.status(200);
+                request.session.currentUser = resultado;
+                response.render("perfil", { usuario: usuarioNuevo })
+            }
+        });
+    }
+    else {
+        //
+        usuarioNuevo.id = request.session.currentUser;
+        mod.modificarUser(usuarioNuevo, function (err, resultado) {
+            if (err)
+                console.log(err.message);
+            else {
+                response.status(200);
+                response.render("perfil", { usuario: usuarioNuevo })
+            }
+        });
+    }
+}
+
+function busqueda(request, response) {
+    console.log(request.query.busqueda);
+    mod.search(request.query.busqueda, function (err, resultado) {
         if (err)
             console.log(err.message);
         else {
-            response.status(200);
-            request.session.currentUser = resultado;
-            response.render("perfil", { usuario: usuarioNuevo })
-        }
-    });
-    }
- else{
-     //
-     usuarioNuevo.id = request.session.currentUser;
-     mod.modificarUser(usuarioNuevo,function(err,resultado){
-        if(err)
-            console.log(err.message);
-        else{
-            response.status(200);
-            response.render("perfil", { usuario: usuarioNuevo })
-        }
-     });
- }
-}
-
-function busqueda(request,response){
-    console.log(request.query.busqueda);
-    mod.search(request.query.busqueda,function(err,resultado){
-        if(err)
-            console.log(err.message);
-        else{
-            response.render("busqueda",{usuarios:resultado,cad:request.query.busqueda});
+            response.render("busqueda", { usuarios: resultado, cad: request.query.busqueda });
         }
     });
 }
 
-function solicitarAmistad(request,response){
-    mod.addSolicitud(request.session.currentUser, request.params.id,function(err){
-        if(err)
+function solicitarAmistad(request, response) {
+    mod.addSolicitud(request.session.currentUser, request.params.id, function (err) {
+        if (err)
             console.log(err.message);
-        else{
+        else {
             response.redirect("/amigos");
         }
     });
 }
 
-function aceptarAmistad(request,response){
-    mod.aceptarSolicitud(request.session.currentUser, request.params.id,function(err){
-        if(err)
+function aceptarAmistad(request, response) {
+    mod.aceptarSolicitud(request.session.currentUser, request.params.id, function (err) {
+        if (err)
             console.log(err.message);
-        else{
+        else {
             response.redirect("/amigos");
         }
     });
 }
 
-function rechazarAmistad(request,response){
-    mod.rechazarSolicitud(request.session.currentUser, request.params.id,function(err){
-        if(err)
+function rechazarAmistad(request, response) {
+    mod.rechazarSolicitud(request.session.currentUser, request.params.id, function (err) {
+        if (err)
             console.log(err.message);
-        else{
+        else {
             console.log("rechazada");
             response.redirect("/amigos");
         }
-    }); 
+    });
 }
 
-function preguntasRandom(request,response){
-    mod.randomQuestions(function(err,resultado){
-        if(err)
+function preguntasRandom(request, response) {
+    mod.randomQuestions(function (err, resultado) {
+        if (err)
             console.log(err.message);
-        else{
-            response.render("listadoPreguntas",{preguntas:resultado});
+        else {
+            response.render("listadoPreguntas", { preguntas: resultado });
         }
     });
 }
 
-function viewQuestion(request,response){
+function viewQuestion(request, response) {
     mod.viewReplys(request.params.id, function (err, resultado) {
         if (err) {
             console.log(err);
@@ -190,19 +190,52 @@ function viewQuestion(request,response){
 }
 
 function newReply(request, response) {
-    if (request.query.otra == "on") {
+    //como pasamos en el value de las respuestas su descripcion y su id separado por una barra procedemos para separarla
+    var frase = request.query.radio.split("/");
+    var descripcion = frase[0];
+    var idRespuesta = frase[1];
+    //añadimos esa respuesta a la tabla solo en caso de que sea la otra y guardamos lo que ha decicido el usuario
+    if (request.query.radio == "otra"){
         mod.addReply(request.query.nueva, request.params.id, function (err, resultado) {
             if (err) {
                 console.log(err);
             }
             else {
-                response.redirect("/preguntas");
+                mod.addReplytoTable(request.session.currentUser, request.params.id,resultado,function(err){
+                    if (err)
+                        console.log(err);
+                    else
+                        response.redirect("/preguntas");
+                });
             }
         });
+    }else{
+        //en caso de que sea una de las que vienen predefinidas no hace falta añadirla a la tabla de respuesta
+        //pero si a la ternaria
+        mod.addReplytoTable(request.session.currentUser, request.params.id,idRespuesta,function(err){
+            if (err)
+                console.log(err);
+            else
+                response.redirect("/preguntas");
+        });
+
     }
-        // mod.addReplytoTable(){
-}     
-        // }
+    
+}
+
+function showNewQuestion(request, response) {
+    response.render("nuevaPregunta");
+}
+
+function newQuestion(request, response) {
+    mod.addQuestion(request.query.pregunta,function(err){
+        if(err)
+            console.log(err.message);
+        else
+            response.redirect("/preguntas");
+    });
+}
+
 module.exports = {
     log: login,
     log_post: check,
@@ -210,13 +243,15 @@ module.exports = {
     formulario: formulario_post,
     friends: amigos,
     estaLogeado: comprobar,
-    buscar : busqueda,
-    exit :salir,
-    solicitar_Amistad:solicitarAmistad,
-    aceptar_Amistad:aceptarAmistad,
-    rechazar_Amistad : rechazarAmistad,
-    preguntasAleatorias : preguntasRandom,
-    mostrarform : mostrarFormulario,
-    verPregunta:viewQuestion,
-    addReply:newReply
+    buscar: busqueda,
+    exit: salir,
+    solicitar_Amistad: solicitarAmistad,
+    aceptar_Amistad: aceptarAmistad,
+    rechazar_Amistad: rechazarAmistad,
+    preguntasAleatorias: preguntasRandom,
+    mostrarform: mostrarFormulario,
+    verPregunta: viewQuestion,
+    addReply: newReply,
+    newQuestion : showNewQuestion,
+    procesarNewQuestion:newQuestion
 }
