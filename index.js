@@ -1,12 +1,14 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const config = require("./config");
+const mysql = require("mysql");
+const pool = mysql.createPool(config.mysqlConfig);
 const bodyParser = require("body-parser");
 const app = express();
 const controlador = require("./controlador");
 const ficherosEstaticos = path.join(__dirname, "public");
 const session = require('express-session');
-const config = require("./config");
 const expressValidator = require("express-validator");
 const miRouter1 = require("./router1");
 //sesiones
@@ -21,8 +23,8 @@ const sessionStore = new MySQLStore({
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
-    saveUninitialized: true
-    // store: sessionStore
+    saveUninitialized: true,
+    store: sessionStore
 }));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -55,8 +57,11 @@ app.get("/procesar_solicitud/:id",controlador.solicitar_Amistad);
 app.get("/aceptar/:id",controlador.aceptar_Amistad);
 app.get("/rechazar/:id",controlador.rechazar_Amistad);
 app.get("/preguntas",controlador.preguntasAleatorias);
-app.get("/newReply/:id",controlador.addReply);//fran
+app.get("/newReply/:id",controlador.addReply);
 app.get("/viewQuestion/:id",controlador.verPregunta);
+app.get("/newQuestion",controlador.newQuestion);
+app.get("/procesarNewQuestion",controlador.procesarNewQuestion);
+
 
 
 

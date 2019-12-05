@@ -194,22 +194,43 @@ function newReply(request, response) {
     var frase = request.query.radio.split("/");
     var descripcion = frase[0];
     var idRespuesta = frase[1];
-    //añadimos esa respuesta a la tabla solo en caso de que sea la otra
-    if (request.query.radio == "otra") {
+    //añadimos esa respuesta a la tabla solo en caso de que sea la otra y guardamos lo que ha decicido el usuario
+    if (request.query.radio == "otra"){
         mod.addReply(request.query.nueva, request.params.id, function (err, resultado) {
             if (err) {
                 console.log(err);
             }
             else {
-                response.redirect("/preguntas");
+                mod.addReplytoTable(request.session.currentUser, request.params.id,resultado,function(err){
+                    if (err)
+                        console.log(err);
+                    else
+                        response.redirect("/preguntas");
+                });
             }
         });
+    }else{
+        //en caso de que sea una de las que vienen predefinidas no hace falta añadirla a la tabla de respuesta
+        //pero si a la ternaria
+        mod.addReplytoTable(request.session.currentUser, request.params.id,idRespuesta,function(err){
+            if (err)
+                console.log(err);
+            else
+                response.redirect("/preguntas");
+        });
+
     }
     
-    //añadir la respuesta a la ternaria
-    mod.addReplytoTable(request.session.currentUser, request.params.id,idRespuesta,function(err,result){
-        if (err)
-            console.log(err);
+}
+
+function showNewQuestion(request, response) {
+    response.render("nuevaPregunta");
+}
+
+function newQuestion(request, response) {
+    mod.addQuestion(request.query.pregunta,function(err){
+        if(err)
+            console.log(err.message);
         else
             response.redirect("/preguntas");
     });
@@ -230,5 +251,7 @@ module.exports = {
     preguntasAleatorias: preguntasRandom,
     mostrarform: mostrarFormulario,
     verPregunta: viewQuestion,
-    addReply: newReply
+    addReply: newReply,
+    newQuestion : showNewQuestion,
+    procesarNewQuestion:newQuestion
 }

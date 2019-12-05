@@ -277,15 +277,15 @@ class modelo {
     addReply(descripcion,idPregunta,callback){
         this.pool.getConnection(function (err, connection) {
             if (err)
-                callback(err);
+                callback(err,null);
             else {
                 var sql = "INSERT INTO respuesta(descripcion,idPregunta) VALUES(?,?)";
                 var params = [descripcion, idPregunta];
                 connection.query(sql, params, function (err, resultado) {
                     if (err)
-                        callback(err);
+                        callback(err,null);
                     else
-                        callback(null);
+                        callback(null,resultado.insertId);
                 });
             }
         });
@@ -298,6 +298,23 @@ class modelo {
             else {
                 var sql = "INSERT INTO usuario_pregunta_respuesta VALUES(?,?,?)";
                 var params = [id,idRespuesta, idPregunta];
+                connection.query(sql, params, function (err, resultado) {
+                    if (err)
+                        callback(err);
+                    else
+                        callback(null);
+                });
+            }
+        });
+    }
+    
+    addQuestion(descripcion,callback){
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err);
+            else {
+                var sql = "INSERT INTO pregunta VALUES(?,?)";
+                var params = [null,descripcion];
                 connection.query(sql, params, function (err, resultado) {
                     if (err)
                         callback(err);
