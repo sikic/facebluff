@@ -8,7 +8,7 @@ const ficherosEstaticos = path.join(__dirname, "public");
 const session = require('express-session');
 const config = require("./config");
 const expressValidator = require("express-validator");
-
+const miRouter1 = require("./router1");
 //sesiones
 const mysqlSession = require("express-mysql-session");
 const MySQLStore = mysqlSession(session);
@@ -34,18 +34,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //middleware estatico
 app.use(express.static(ficherosEstaticos));
 
-//se encarga de mostrar el formulario de login
-app.get("/login", controlador.log);
-app.get("/formulario", controlador.mostrarform);
 
-//coge los datos y comprueba si el usuario y la password estan bien
-app.post("/login_post",controlador.log_post);
+//Usamos el router1
+app.use(miRouter1);
 
 
-app.post("/procesar_post",controlador.formulario);
-//funcion que no permite el paso a el resto de funciones
 app.use(controlador.estaLogeado);
-
 
 
 //validador de datos
