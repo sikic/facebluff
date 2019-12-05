@@ -10,23 +10,19 @@
 </head>
 
 <body>
-    <header>
-        <div class="logo">
 
-        </div>
+    <% if(usuarioLogeado){ %>
+        
+        <% } else { %>
+        <h2>NUEVO USUARIO</h2>
+        <% } %>
 
-        <div class="menu">
-            <a href="/login">Entrar</a>
-            <a href="/formulario">Nuevo usuario</a>
-        </div>
-
-    </header>
     <div class="principal">
         <div class="nuevo">
             <% if(usuarioLogeado){ %>
-            <h2>MODIFICAR USUARIO</h2>
+                <%- include("header",{points : 100}) %>
             <% } else { %>
-            <h2>NUEVO USUARIO</h2>
+                <%- include("headerinicial") %> 
             <% } %>
 
         </div>
