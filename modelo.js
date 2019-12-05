@@ -273,5 +273,40 @@ class modelo {
             }
         });
     }
+
+    addReply(descripcion,idPregunta,callback){
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err);
+            else {
+                var sql = "INSERT INTO respuesta(descripcion,idPregunta) VALUES(?,?)";
+                var params = [descripcion, idPregunta];
+                connection.query(sql, params, function (err, resultado) {
+                    if (err)
+                        callback(err);
+                    else
+                        callback(null);
+                });
+            }
+        });
+    }
+
+    addReplytoTable(id,idRespuesta,idPregunta,callback){
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err);
+            else {
+                var sql = "INSERT INTO usuario_pregunta_respuesta VALUES(?,?,?)";
+                var params = [id,idRespuesta, idPregunta];
+                connection.query(sql, params, function (err, resultado) {
+                    if (err)
+                        callback(err);
+                    else
+                        callback(null);
+                });
+            }
+        });
+    }
 }
+
 module.exports = modelo;

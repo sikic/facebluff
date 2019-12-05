@@ -53,8 +53,8 @@ app.get("/procesar_solicitud/:id",controlador.solicitar_Amistad);
 app.get("/aceptar/:id",controlador.aceptar_Amistad);
 app.get("/rechazar/:id",controlador.rechazar_Amistad);
 app.get("/preguntas",controlador.preguntasAleatorias);
-app.get("/newQuestion",controlador.preguntasAleatorias);//fran
-app.get("/viewQuestion/:ask/:id",controlador.verPregunta);
+app.get("/newReply/:id",controlador.addReply);//fran
+app.get("/viewQuestion/:id",controlador.verPregunta);
 
 
 

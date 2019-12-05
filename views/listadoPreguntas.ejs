@@ -20,11 +20,11 @@
         </div>
 
         <div class="principal">
-        <% preguntas.forEach(e =>{ %>
+        <% preguntas.forEach(e => { %>
                 <div class="preguntas">
-                    <a href="/viewQuestion/<%= e.descripcion %> / <%= e.id %>" class="texto"><%= e.descripcion %> </a> 
+                    <a href="/viewQuestion/<%= e.id%>" class="texto"> <%= e.descripcion %> </a> 
                 </div>
-        <% }); %>
+        <% } ); %>
 
             <div class="subtitulo">
                 <h1>

@@ -180,15 +180,30 @@ function preguntasRandom(request,response){
 }
 
 function viewQuestion(request,response){
-    console.log(request.params.ask + "  " + request.params.id);
-    mod.viewReplys(request.params.id,function(err,resultado){
-        if(err)
+    mod.viewReplys(request.params.id, function (err, resultado) {
+        if (err) {
             console.log(err);
-        else{
-            response.render("responder_mi_mismo",{pregunta:request.params.ask,respuestas:resultado});
+        }
+        else {
+            response.render("responderAmi", { pregunta: "request.params.id", respuestas: resultado, idPregunta: request.params.id });
         }
     });
 }
+
+function newReply(request, response) {
+    if (request.query.otra == "on") {
+        mod.addReply(request.query.nueva, request.params.id, function (err, resultado) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                response.redirect("/preguntas");
+            }
+        });
+    }
+        // mod.addReplytoTable(){
+}     
+        // }
 module.exports = {
     log: login,
     log_post: check,
@@ -203,5 +218,6 @@ module.exports = {
     rechazar_Amistad : rechazarAmistad,
     preguntasAleatorias : preguntasRandom,
     mostrarform : mostrarFormulario,
-    verPregunta:viewQuestion
+    verPregunta:viewQuestion,
+    addReply:newReply
 }
