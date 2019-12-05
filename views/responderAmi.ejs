@@ -13,17 +13,19 @@
     <%- include("header",{points : 100}) %>
 
     <div class="titulo centro">
-        <h1><%= pregunta %></h1>
+        <h1> <%= pregunta %></h1>
     </div>
 
     <div class="principal">
         <% if(respuestas.length == 0){ %>
         <h2>La pregunta no tiene respuestas aún <i class="fas fa-heart-broken"></i></h2>
         <% }else{ %>
+            <form action="/newReply/<%= idPregunta %>" method="GET">
+
         <% respuestas.forEach(e=>{ %>
         <div class="respuestas">
             <label>
-                <input type="radio">
+                <input type="radio" name="radio" value="<%= e.descripcion %>/ <%= e.id %> ">
                 <%= e.descripcion %>
             </label>
         </div>
@@ -31,8 +33,7 @@
         <% } %>
 
         <div class="respuestas" id="otra">
-            <form action="/newReply/<%= idPregunta %>" method="GET">
-                <input type="radio" name="otra">
+                <input type="radio" name="radio" value="otra">
                 <label>
                     Otra:
                 </label>

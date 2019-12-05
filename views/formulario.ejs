@@ -9,6 +9,7 @@
     <title>Modificar Perfil</title>
 </head>
 
+<%- include("header",{points : 100}) %>
 <body>
 
     <% if(usuarioLogeado){ %>
@@ -20,7 +21,6 @@
     <div class="principal">
         <div class="nuevo">
             <% if(usuarioLogeado){ %>
-                <%- include("header",{points : 100}) %>
             <% } else { %>
                 <%- include("headerinicial") %> 
             <% } %>
