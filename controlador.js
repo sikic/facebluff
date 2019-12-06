@@ -46,16 +46,16 @@ function comprobar(request, response, next) {
     }
 }
 function perfil(request, response) {
-    mod.getDataUser(request.params.id,function(err,resultado){
-        if(err)
+    mod.getDataUser(request.params.id, function (err, resultado) {
+        if (err)
             console.log(err.message);
-        else{
+        else {
             console.log(resultado);
-            response.render("perfil",{usuario : resultado} );
+            response.render("perfil", { usuario: resultado });
         }
 
     });
-   
+
 }
 
 function salir(request, response) {
@@ -206,13 +206,13 @@ function newReply(request, response) {
     var descripcion = frase[0];
     var idRespuesta = frase[1];
     //añadimos esa respuesta a la tabla solo en caso de que sea la otra y guardamos lo que ha decicido el usuario
-    if (request.query.radio == "otra"){
+    if (request.query.radio == "otra") {
         mod.addReply(request.query.nueva, request.params.id, function (err, resultado) {
             if (err) {
                 console.log(err);
             }
             else {
-                mod.addReplytoTable(request.session.currentUser, request.params.id,resultado,function(err){
+                mod.addReplytoTable(request.session.currentUser, request.params.id, resultado, function (err) {
                     if (err)
                         console.log(err);
                     else
@@ -220,10 +220,10 @@ function newReply(request, response) {
                 });
             }
         });
-    }else{
+    } else {
         //en caso de que sea una de las que vienen predefinidas no hace falta añadirla a la tabla de respuesta
         //pero si a la ternaria
-        mod.addReplytoTable(request.session.currentUser, request.params.id,idRespuesta,function(err){
+        mod.addReplytoTable(request.session.currentUser, request.params.id, idRespuesta, function (err) {
             if (err)
                 console.log(err);
             else
@@ -231,7 +231,7 @@ function newReply(request, response) {
         });
 
     }
-    
+
 }
 
 function showNewQuestion(request, response) {
@@ -239,14 +239,72 @@ function showNewQuestion(request, response) {
 }
 
 function newQuestion(request, response) {
-    mod.addQuestion(request.query.pregunta,function(err){
-        if(err)
+    mod.addQuestion(request.query.pregunta, function (err) {
+        if (err)
             console.log(err.message);
         else
             response.redirect("/preguntas");
     });
 }
 
+function adminQuestions(request, response) {
+    //cogemos la descripcion de la pregunta
+    mod.getAskDescription(request.params.id, function (err, descripcion) {
+        var respondido;
+        if (err)
+            console.log(err);
+        else {
+            //ahora hay que comprobar si el usuario actual ha respondido o no a la pregunta
+            mod.checkResponseOrNot(request.session.currentUser, request.params.id, function (err, resultado) {
+                if (err)
+                    console.log(err.message);
+                else {
+                    if (resultado.length == 0) { //el usuario actual aun respondido  a la pregunta
+                        respondido = false;
+                    } else {//el usuario si que ha respondido ya a la pregunta
+                        respondido = true;
+                    }
+                    //cogemos los amigos que hayan respondido a esas preguntas
+                    mod.getUsersToQuestion(request.params.id, function (err, lista) {
+                        if (err)
+                            console.log(err);
+                        else { //si que hay amigos que han contestado esa pregunta
+                            //hay que comprobar si lo que ellos han respondido coincide con lo que yo pienso que han
+                            //respondido o todavia no he intentado adivinar nada 
+                            //esta funcion devuelve un array con el id, mi respuesta sobre lo que puso y lo que realmente puso
+                            mod.adivinar(request.params.id, request.session.currentUser, function (err, ar) {
+                                if (err)
+                                    console.log(err.message);
+                                else {
+                                    lista.forEach((elm, i) => {
+                                        var encontrado = ar.some(n => {
+                                            if(n.idUsuario2 == elm.id){
+                                                return true;
+                                            }else
+                                                return false;
+                                            
+                                        });
+                                        if (!encontrado) //no lo ha encontrado por lo tanto aun esta sin intentar adivinar
+                                            lista[i].x = 0;
+                                        else {
+                                            if (ar[i].miRespuesta == ar[i].respuestaReal) {// las respuesta coinciden por lo tanto he acertao
+                                                lista[i].x = 1;
+                                            } else
+                                                lista[i].x = -1;
+                                        }
+                                    });
+                                    response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista })
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+
+}
 module.exports = {
     log: login,
     log_post: check,
@@ -263,7 +321,8 @@ module.exports = {
     mostrarform: mostrarFormulario,
     verPregunta: viewQuestion,
     addReply: newReply,
-    newQuestion : showNewQuestion,
-    procesarNewQuestion:newQuestion,
-    mostrarPerfil : perfil
+    newQuestion: showNewQuestion,
+    procesarNewQuestion: newQuestion,
+    mostrarPerfil: perfil,
+    adminPreguntas: adminQuestions
 }

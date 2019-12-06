@@ -58,22 +58,23 @@ class modelo {
             }
         });
     }
-    modificarUser(data,callback){
-        this.pool.getConnection(function(err,connection){
-            if(err)
-            callback(err);
-            else{
-            var sql = "UPDATE usuarios SET nombre = ?,email = ?,contraseña = ?,fechaNacimiento = ? ,sexo = ?,fotoPerfil = ? WHERE id = ?";
-            var params = [data.nombre,data.email,data.contraseña,data.fechaNacimiento,data.sexo,data.fotoPerfil, data.id];
-            connection.query(sql,params,function(err,resul){
-                if(err)
+    modificarUser(data, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err)
                 callback(err);
-                else
-                callback(null);
-            });
-        }
-    });
-}
+            else {
+                var sql = "UPDATE usuarios SET nombre = ?,email = ?,contraseña = ?,fechaNacimiento = ? ,sexo = ?,fotoPerfil = ? WHERE id = ?";
+                var params = [data.nombre, data.email, data.contraseña, data.fechaNacimiento, data.sexo, data.fotoPerfil, data.id];
+                connection.query(sql, params, function (err, resul) {
+                    connection.release();
+                    if (err)
+                        callback(err);
+                    else
+                        callback(null);
+                });
+            }
+        });
+    }
     //----------------------------------------
     getSolicitudes(id, callback) {
         this.pool.getConnection(function (err, connection) {
@@ -144,6 +145,8 @@ class modelo {
                 var sql = "SELECT u.nombre,u.fotoPerfil,u.id FROM usuarios u WHERE nombre LIKE ? ";
                 var params = "%" + cadena + "%";
                 connection.query(sql, params, function (err, resultado) {
+                    connection.release();
+
                     if (err)
                         callback(err, null);
                     else {
@@ -171,6 +174,7 @@ class modelo {
                 var sql = "INSERT INTO solicitudes VALUES (?,?) ";
                 var params = [idSolicitado, idSolicitante];
                 connection.query(sql, params, function (err, result) {
+                    connection.release();
                     if (err)
                         callback(err);
                     else
@@ -188,18 +192,21 @@ class modelo {
                 var sql = "DELETE FROM solicitudes   WHERE solicitudes.idUsuario2 = ?  AND solicitudes.idUsuario1 = ?";
                 var params = [idSolicitado, idSolicitante];
                 connection.query(sql, params, function (err, result) {
+                    connection.release();
                     if (err)
                         callback(err);
                     else {
                         var sql2 = "INSERT INTO amigos VALUES (?,?) ";
                         var params2 = [idSolicitado, idSolicitante];
                         connection.query(sql2, params2, function (err, result) {
+                            connection.release();
                             if (err)
                                 callback(err);
                             else {
                                 var sql3 = "INSERT INTO amigos VALUES (?,?) ";
                                 var params3 = [idSolicitante, idSolicitado];
                                 connection.query(sql3, params3, function (err, result) {
+                                    connection.release();
                                     if (err)
                                         callback(err);
                                     else {
@@ -222,6 +229,7 @@ class modelo {
                 var sql = "DELETE FROM solicitudes WHERE solicitudes.idUsuario2 = ?  AND solicitudes.idUsuario1 = ?";
                 var params = [idSolicitado, idSolicitante];
                 connection.query(sql, params, function (err, result) {
+                    connection.release();
                     if (err)
                         callback(err);
                     else
@@ -231,74 +239,78 @@ class modelo {
         });
     }
 
-    randomQuestions(callback){
+    randomQuestions(callback) {
         this.pool.getConnection(function (err, connection) {
             if (err)
-                callback(err,null);
+                callback(err, null);
             else {
                 var sql = "SELECT pregunta.id,pregunta.descripcion FROM pregunta ORDER BY RAND() LIMIT ?";
                 var params = 5;
                 connection.query(sql, params, function (err, resultado) {
+                    connection.release();
                     if (err)
-                        callback(err,null);
-                    else{
+                        callback(err, null);
+                    else {
                         var rs = [];
-                        resultado.forEach(e=>{
+                        resultado.forEach(e => {
                             var ar = {
-                                descripcion:e.descripcion,
-                                id:e.id
+                                descripcion: e.descripcion,
+                                id: e.id
                             }
                             rs.push(ar);
                         });
-                        callback(null,rs);
+                        callback(null, rs);
                     }
                 });
             }
         });
     }
 
-    viewReplys(id,callback){
+    viewReplys(id, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err)
-                callback(err,null);
+                callback(err, null);
             else {
                 var sql = "SELECT r.id,r.descripcion FROM respuesta r WHERE r.idPregunta = ?";
                 var params = id;
                 connection.query(sql, params, function (err, resultado) {
+                    connection.release();
                     if (err)
-                        callback(err,null);
+                        callback(err, null);
                     else
-                        callback(null,resultado);
+                        callback(null, resultado);
                 });
             }
         });
     }
 
-    addReply(descripcion,idPregunta,callback){
+    addReply(descripcion, idPregunta, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err)
-                callback(err,null);
+                callback(err, null);
             else {
                 var sql = "INSERT INTO respuesta(descripcion,idPregunta) VALUES(?,?)";
                 var params = [descripcion, idPregunta];
                 connection.query(sql, params, function (err, resultado) {
+                    connection.release();
                     if (err)
-                        callback(err,null);
+                        callback(err, null);
                     else
-                        callback(null,resultado.insertId);
+                        callback(null, resultado.insertId);
                 });
             }
         });
     }
 
-    addReplytoTable(id,idRespuesta,idPregunta,callback){
+    addReplytoTable(id, idRespuesta, idPregunta, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err)
                 callback(err);
             else {
                 var sql = "INSERT INTO usuario_pregunta_respuesta VALUES(?,?,?)";
-                var params = [id,idRespuesta, idPregunta];
+                var params = [id, idRespuesta, idPregunta];
                 connection.query(sql, params, function (err, resultado) {
+                    connection.release();
                     if (err)
                         callback(err);
                     else
@@ -307,15 +319,16 @@ class modelo {
             }
         });
     }
-    
-    addQuestion(descripcion,callback){
+
+    addQuestion(descripcion, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err)
                 callback(err);
             else {
                 var sql = "INSERT INTO pregunta VALUES(?,?)";
-                var params = [null,descripcion];
+                var params = [null, descripcion];
                 connection.query(sql, params, function (err, resultado) {
+                    connection.release();
                     if (err)
                         callback(err);
                     else
@@ -324,18 +337,19 @@ class modelo {
             }
         });
     }
-    getDataUser(id,callback){
-        this.pool.getConnection(function(err,connection){
-            if(err)
-            callback(err,null);
-            else{
+    getDataUser(id, callback) {
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err, null);
+            else {
                 var sql = "SELECT u.nombre,u.fechaNacimiento,u.sexo,u.fotoPerfil,u.puntos  FROM usuarios u WHERE u.id = ?";
                 var params = id;
-                connection.query(sql,id,function(err,resultado){
+                connection.query(sql, id, function (err, resultado) {
+                    connection.release();
                     if (err)
-                    callback(err,null);
-                else{
-                    var rs;
+                        callback(err, null);
+                    else {
+                        var rs;
                         resultado.forEach(element => {
                             let edad = Date.now() - element.fechaNacimiento.getTime();
                             let anios = Math.round(edad / (1000 * 60 * 60 * 24) / 31 / 12);
@@ -352,11 +366,108 @@ class modelo {
                         });
                         callback(null, rs);
 
-                }
-            });
+                    }
+                });
 
-        }
-    });
-}
+            }
+        });
+    }
+    //funcion que da la descripcion de una pregunta
+    getAskDescription(id,callback){
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err,null);
+            else {
+                var sql = "SELECT descripcion FROM pregunta WHERE id = ?";
+                var params = [id];
+                connection.query(sql, params, function (err, resultado) {
+                    connection.release();
+                    if (err)
+                        callback(err,null);
+                    else
+                        callback(null,resultado[0].descripcion);
+                });
+            }
+        });
+    }
+
+        //funcion que devuelve la respuesta que un usuario ha dado a una pregunta
+    checkResponseOrNot(id,idPregunta,callback){
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err,null);
+            else {
+                var sql = "SELECT * FROM usuario_pregunta_respuesta WHERE idUsuario = ? AND idPregunta = ?";
+                var params = [id,idPregunta];
+                connection.query(sql, params, function (err, resultado) {
+                    connection.release();
+                    if (err)
+                        callback(err,null);
+                    else
+                        callback(null,resultado);
+                });
+            }
+        });
+    }
+    //funcion que devuelve los amigos que han respondido a una pregunta x
+    getUsersToQuestion(idPregunta,callback){
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err,null);
+            else {
+                var sql ="SELECT DISTINCT us.nombre,us.fotoPerfil,us.id FROM usuario_pregunta_respuesta u INNER JOIN amigos a ON a.usuario2 = u.idUsuario INNER JOIN usuarios us ON a.usuario2 = us.id WHERE u.idPregunta = ?";
+                var params = idPregunta;
+                connection.query(sql, params, function (err, resultado){
+                    connection.release();
+                    if (err)
+                        callback(err,null);
+                    else
+                        callback(null,resultado);
+                });
+            }
+        });
+    }
+    //funcion que da la respuesta que un usuario cree que ha dado otro
+    getReplyForOtherUser(id,idUsuario,idPregunta,callback){
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err,null);
+            else {
+                var sql ="SELECT idRespuesta FROM cuaternaria WHERE idUsuario1 = ? AND idUsuario2 = ? AND idPregunta = ?";
+                var params = [id,idUsuario,idPregunta];
+                connection.query(sql, params, function (err, resultado){
+                    connection.release();
+                    if (err)
+                        callback(err,null);
+                    else
+                        callback(null,resultado);
+                });
+            }
+        });
+    }
+
+    //funcion que devuelve el id de los usuarios , su respuesta real y lo que yo opino
+    adivinar(pregunta,usuario,callback){
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err,null);
+            else {
+                var sql ="SELECT c.idUsuario2 ,c.idRespuesta miRespuesta,u.idRespuesta respuestaReal FROM usuario_pregunta_respuesta u LEFT JOIN cuaternaria c ON u.idUsuario = c.idUsuario2 AND c.idPregunta = u.idPregunta WHERE c.idPregunta = ? AND c.idUsuario1 = ?";
+                var params = [pregunta,usuario];
+                connection.query(sql, params, function (err, resultado){
+                    connection.release();
+                    if (err)
+                        callback(err,null);
+                    else
+                        callback(null,resultado);
+                });
+            }
+        });
+    }
+    //funcion que devuelve una lista con los ids de los usuarios de los que he adivinado sus respuestas
+    // SELECT c.idUsuario2 FROM usuario_pregunta_respuesta u LEFT JOIN cuaternaria c ON u.idRespuesta=c.idRespuesta WHERE c.idUsuario1= 18 AND c.idPregunta = 6
+
+    //devuelve el usuario y la respuesta que yo creo que ha dado ese usuario
+    // SELECT c.idUsuario2 ,c.idRespuesta FROM usuario_pregunta_respuesta u INNER JOIN cuaternaria c ON u.idUsuario = c.idUsuario2 WHERE c.idPregunta = 6 AND c.idUsuario1 = 18
 }
 module.exports = modelo;
