@@ -191,11 +191,15 @@ function preguntasRandom(request, response) {
 
 function viewQuestion(request, response) {
     mod.viewReplys(request.params.id, function (err, resultado) {
-        if (err) {
+        if (err)
             console.log(err);
-        }
         else {
-            response.render("responderAmi", { pregunta: "request.params.id", respuestas: resultado, idPregunta: request.params.id });
+            mod.getAskDescription(request.params.id, function (err, descripcion) {
+                if (err)
+                    console.log(err.message);
+                else
+                    response.render("responderAmi", { pregunta: descripcion, respuestas: resultado, idPregunta: request.params.id });
+            });
         }
     });
 }
@@ -278,11 +282,11 @@ function adminQuestions(request, response) {
                                 else {
                                     lista.forEach((elm, i) => {
                                         var encontrado = ar.some(n => {
-                                            if(n.idUsuario2 == elm.id){
+                                            if (n.idUsuario2 == elm.id) {
                                                 return true;
-                                            }else
+                                            } else
                                                 return false;
-                                            
+
                                         });
                                         if (!encontrado) //no lo ha encontrado por lo tanto aun esta sin intentar adivinar
                                             lista[i].x = 0;
@@ -293,7 +297,7 @@ function adminQuestions(request, response) {
                                                 lista[i].x = -1;
                                         }
                                     });
-                                    response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista })
+                                    response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista, id: request.params.id })
                                 }
                             });
                         }
@@ -302,9 +306,47 @@ function adminQuestions(request, response) {
             });
         }
     });
-
-
 }
+
+function adivina(request, response) {
+    //como pasamos en el value de las respuestas su descripcion y su id separado por una barra procedemos para separarla
+    var frase = request.params.id.split("*");
+    var idUsuario = frase[0];
+    var idPregunta = frase[1];
+    //cogemos la descripcion
+    mod.getAskDescription(idPregunta, function (err, descripcion) {
+        if (err)
+            console.log(err.message);
+        else {
+            mod.viewReplys(idPregunta, function (err, resultado) {
+                if (err)
+                    console.log(err.message);
+                else {
+                    mod.getDataUser(idUsuario, function (err, datos) {
+                        if (err)
+                            console.log(err.message);
+                        else
+                            response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre,id:idPregunta });
+                    });
+                }
+            });
+        }
+    });
+}
+
+function anadircuaternaria(request, response) {
+    request.body.radio;
+    //añadimos que el usuario actual a respondido sobre otro usuario    
+    mod.addReplytoCuaternaria(request.session.currentUser, idUsuario, idPregunta, idRespuesta, function (err, resultado) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            response.redirect("/administrarPreguntas/" + request.params.id);
+        }
+    });
+}
+    }
 module.exports = {
     log: login,
     log_post: check,
@@ -321,8 +363,10 @@ module.exports = {
     mostrarform: mostrarFormulario,
     verPregunta: viewQuestion,
     addReply: newReply,
+    adivinar: adivina,
     newQuestion: showNewQuestion,
     procesarNewQuestion: newQuestion,
     mostrarPerfil: perfil,
-    adminPreguntas: adminQuestions
+    adminPreguntas: adminQuestions,
+    addCuaternaria: anadircuaternaria
 }

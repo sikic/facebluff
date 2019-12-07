@@ -199,7 +199,6 @@ class modelo {
                         var sql2 = "INSERT INTO amigos VALUES (?,?) ";
                         var params2 = [idSolicitado, idSolicitante];
                         connection.query(sql2, params2, function (err, result) {
-                            connection.release();
                             if (err)
                                 callback(err);
                             else {
@@ -469,5 +468,22 @@ class modelo {
 
     //devuelve el usuario y la respuesta que yo creo que ha dado ese usuario
     // SELECT c.idUsuario2 ,c.idRespuesta FROM usuario_pregunta_respuesta u INNER JOIN cuaternaria c ON u.idUsuario = c.idUsuario2 WHERE c.idPregunta = 6 AND c.idUsuario1 = 18
+    addReplytoCuaternaria(id,idUser,pregunta,respuesta,callback){
+        this.pool.getConnection(function (err, connection) {
+            if (err)
+                callback(err,null);
+            else {
+                var sql ="INSERT INTO cuaternaria VALUES(?,?,?,?)";
+                var params = [id,idUser,pregunta,respuesta];
+                connection.query(sql, params, function (err, resultado){
+                    connection.release();
+                    if (err)
+                        callback(err,null);
+                    else
+                        callback(null,resultado);
+                });
+            }
+        });
+    }
 }
 module.exports = modelo;
