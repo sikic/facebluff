@@ -41,7 +41,7 @@ app.use(express.static(ficherosEstaticos));
 app.use(miRouter1);
 //vista de perfil
 app.get("/perfil/:id",controlador.mostrarPerfil);
-
+app.get("/perfil",controlador.mostrarPerfilLogueado);
 app.use(controlador.estaLogeado);
 
 

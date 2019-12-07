@@ -110,7 +110,7 @@ class modelo {
                 callback(err, null);
             else {
                 //falla que solo se muestra la amistad en uno de los amigos , en el otro no
-                var sql = "SELECT DISTINCT u.nombre,u.fotoPerfil,a.usuario2 FROM usuarios u INNER JOIN amigos a ON u.id = a.usuario1 WHERE a.usuario2 = ? ";
+                var sql = "SELECT DISTINCT u.nombre,u.fotoPerfil,a.usuario1 FROM usuarios u INNER JOIN amigos a ON u.id = a.usuario1 WHERE a.usuario2 = ? ";
                 var params = id;
                 connection.query(sql, params, function (err, resultado) {
                     connection.release();
@@ -122,7 +122,7 @@ class modelo {
                             var ar = {
                                 nombre: elm.nombre,
                                 fotoPerfil: elm.fotoPerfil,
-                                id: elm.usuario2
+                                id: elm.usuario1
                             }
                             rs.push(ar);
                         });
