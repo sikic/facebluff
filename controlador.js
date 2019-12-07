@@ -50,12 +50,11 @@ function perfil(request, response) {
         if(err)
             console.log(err.message);
         else{
-            console.log(resultado);
             response.render("perfil",{usuario : resultado} );
         }
 
     });
-   
+
 }
 function perfilLogueado(request,response){
     
