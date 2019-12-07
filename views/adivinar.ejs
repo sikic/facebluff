@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/adivinar.css">
+    <title>Responderme-Amigo</title>
+</head>
+
+
+<body>
+
+    <%- include("header",{points : 100}) %>
+
+
+    <div class="titulo centro">
+        <h1><%= pregunta %> </h1>
+    </div>
+
+    <div class="principal">
+            <div class="frase">
+                    <p>¿Qué crees que opina <span><%= nombre %></span>?</p>
+            </div>
+        <% if(respuestas.length == 0){ %>
+        <h2>La pregunta no tiene respuestas aún <i class="fas fa-heart-broken"></i></h2>
+        <% }else{ %>
+        <form action="/newReplyToUser/<%= id %>" method="GET">
+            <% respuestas.forEach(e=>{ %>
+            <div class="respuestas">
+                <label>
+                    <input type="radio" name="radio" value="<%= e.descripcion %>/ <%= e.id %> ">
+                    <%= e.descripcion %>
+                </label>
+            </div>
+            <% }); %>
+            <% } %>
+    </div>
+        <div class="boton">
+            <input type="submit" value="responder">
+        </div>
+        </form>
+</body>
+
+</html>

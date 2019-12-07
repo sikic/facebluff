@@ -54,7 +54,7 @@ a {
 }
 
 a:hover,input[type="submit"]:hover {
-    background-color: rgb(22, 6, 51) !important;
+    background-color: rgb(66, 6, 177) !important;
     animation: shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
     transform: translate3d(0, 0, 0);
 }
