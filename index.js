@@ -54,6 +54,9 @@ app.get("/newReply/:id",controlador.addReply);
 app.get("/viewQuestion/:id",controlador.verPregunta);
 app.get("/newQuestion",controlador.newQuestion);
 app.get("/procesarNewQuestion",controlador.procesarNewQuestion);
+app.get("/administrarPreguntas/:id",controlador.adminPreguntas);
+app.get("/adivinarRespuesta/:id",controlador.adivinar);
+app.get("/newReplyToUser/:id",controlador.addCuaternaria);
 
 
 
