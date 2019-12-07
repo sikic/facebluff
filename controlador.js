@@ -57,6 +57,19 @@ function perfil(request, response) {
     });
 
 }
+function perfilLogueado(request,response){
+    
+        mod.getDataUser(request.session.currentUser,function(err,resultado){
+            if(err)
+                console.log(err.message);
+            else{
+                console.log(resultado);
+                response.render("perfil",{usuario : resultado} );
+            }
+    
+        });
+    
+}
 
 function salir(request, response) {
     request.session.currentUser = -1;
@@ -363,6 +376,10 @@ module.exports = {
     mostrarform: mostrarFormulario,
     verPregunta: viewQuestion,
     addReply: newReply,
+    newQuestion : showNewQuestion,
+    procesarNewQuestion:newQuestion,
+    mostrarPerfil : perfil,
+    mostrarPerfilLogueado : perfilLogueado
     adivinar: adivina,
     newQuestion: showNewQuestion,
     procesarNewQuestion: newQuestion,
