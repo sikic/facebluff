@@ -17,15 +17,15 @@
     </div>
 
     <div class="principal">
+        <form action="/newReply/<%= idPregunta %>" method="GET">
         <% if(respuestas.length == 0){ %>
         <h2>La pregunta no tiene respuestas aún <i class="fas fa-heart-broken"></i></h2>
         <% }else{ %>
-            <form action="/newReply/<%= idPregunta %>" method="GET">
 
         <% respuestas.forEach(e=>{ %>
         <div class="respuestas">
             <label>
-                <input type="radio" name="radio" value="<%= e.descripcion %>/ <%= e.id %> ">
+                <input type="radio" name="radio" value="<%= e.descripcion %>/<%= e.id %> ">
                 <%= e.descripcion %>
             </label>
         </div>

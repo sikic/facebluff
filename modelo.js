@@ -451,8 +451,8 @@ class modelo {
             if (err)
                 callback(err,null);
             else {
-                var sql ="SELECT c.idUsuario2 ,c.idRespuesta miRespuesta,u.idRespuesta respuestaReal FROM usuario_pregunta_respuesta u LEFT JOIN cuaternaria c ON u.idUsuario = c.idUsuario2 AND c.idPregunta = u.idPregunta WHERE c.idPregunta = ? AND c.idUsuario1 = ?";
-                var params = [pregunta,usuario];
+                var sql ="SELECT c.idUsuario2 ,c.idRespuesta miRespuesta,u.idRespuesta respuestaReal FROM usuario_pregunta_respuesta u LEFT JOIN cuaternaria c ON u.idUsuario = c.idUsuario2 AND c.idPregunta = u.idPregunta WHERE c.idUsuario1 = ? AND c.idPregunta = ? AND c.idUsuario2 <> ?";
+                var params = [usuario,pregunta,usuario];
                 connection.query(sql, params, function (err, resultado){
                     connection.release();
                     if (err)

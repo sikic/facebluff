@@ -63,7 +63,7 @@
         <% amigos.forEach(e=>{ %>
         <div>
             <img src="../img/<%= e.fotoPerfil %>" alt="" class="fotoPerfil">
-            <span> <a href="/perfil/<%= e.id %>"><%= e.nombre %></a></span>
+            <span> <a href="/perfil/<%= e.id %>" class="texto"><%= e.nombre %></a></span>
         </div>
 
         <% }); %>
