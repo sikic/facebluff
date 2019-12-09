@@ -9,14 +9,11 @@
 body {
     background-image: url(../img/fondo.jpg);
 }
-
-
 .menu {
     display: flex;
     flex-direction: row;
     justify-content: center;
 }
-
 
 li {
     list-style: none;
@@ -41,17 +38,6 @@ li:hover() {
     flex-direction: column;
     border-radius: 25px;
 }
-
-.nuevo {
-    display: flex;
-    justify-content: center;
-    background: gray;
-    padding-left: 1em;
-    border: 2px dashed black;
-    margin-bottom: 1.5%;
-    font-size: 1.5em;
-}
-
 .texto {
     color: white;
 }

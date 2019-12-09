@@ -9,18 +9,20 @@
     <title>Modificar Perfil</title>
 </head>
 
-<%- include("header",{points : 100}) %>
 <body>
+    
 
-    <% if(usuarioLogeado){ %>
-        
-        <% } else { %>
+<% if(usuarioLogeado){ %>
+    <h2>MODIFICAR USUARIO</h2>
+    <% } else { %>
         <h2>NUEVO USUARIO</h2>
         <% } %>
-
-    <div class="principal">
-        <div class="nuevo">
-            <% if(usuarioLogeado){ %>
+        
+        <div class="principal">
+            <div>
+                <% if(usuarioLogeado){ %>
+                    <%- include("header",{points : 100}) %>
+                    <body>
             <% } else { %>
                 <%- include("headerinicial") %> 
             <% } %>
