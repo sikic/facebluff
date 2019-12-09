@@ -30,7 +30,7 @@
             <% respuestas.forEach(e=>{ %>
             <div class="respuestas">
                 <label>
-                    <input type="radio" name="radio" value="<%= e.descripcion %>/ <%= e.id %> ">
+                    <input type="radio" name="pregunta" value="<%= e.descripcion %>/<%= e.id %>/<%= idUser %> ">
                     <%= e.descripcion %>
                 </label>
             </div>

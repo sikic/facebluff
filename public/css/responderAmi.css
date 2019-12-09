@@ -68,7 +68,10 @@ li{
 .boton{
     width: 100%;
 }
-
+.icono{
+    font-size: 1.5em;
+    color: rgb(54, 16, 1);
+}
 input[type="text"]{
     width: 30em;
     height: 1.6em;
