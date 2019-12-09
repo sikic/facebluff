@@ -253,7 +253,7 @@ function newQuestion(request, response) {
 
 function adminQuestions(request, response) {
     //cogemos la descripcion de la pregunta
-    mod.getAskDescription(request.params.id, function (err, descripcion) {
+    mod.getAskDescription(request.params.id, function (err, descripcion){
         var respondido;
         if (err)
             console.log(err);

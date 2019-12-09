@@ -192,7 +192,6 @@ class modelo {
                 var sql = "DELETE FROM solicitudes   WHERE solicitudes.idUsuario2 = ?  AND solicitudes.idUsuario1 = ?";
                 var params = [idSolicitado, idSolicitante];
                 connection.query(sql, params, function (err, result) {
-                    connection.release();
                     if (err)
                         callback(err);
                     else {
