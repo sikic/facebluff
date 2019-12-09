@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Patrick+Hand&display=swap');
 * {
-    /* border: 1px solid red;     */
+     /* border: 1px solid red;      */
     margin: 0;
     padding: 0;
     font-family: 'Patrick Hand', cursive;
@@ -78,4 +78,14 @@ a {
     border: 2px solid white;
     padding: 0.2em;
     margin-left: 0.5em;
+}
+
+span{
+    
+    width: 10em;
+    font-weight: bold;
+}
+
+.puntacos{
+    padding-left: 15%;
 }
