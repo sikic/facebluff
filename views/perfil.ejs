@@ -15,14 +15,14 @@
 
         <%- include("header",{points : usuario.puntos}) %>
         <div class="centro">
-            <% if(usuario.fotoPerfil != null){ %>
+            <% if(imagen){ %>
             <div class="tuperfil">
                 <h1>Tu Perfil</h1>
             </div>
             <% }%>
             <div class="datos">
 
-                <img src="../img/<%= usuario.fotoPerfil %>" alt="">
+                <img src="/imagen/<%= imagen %>" alt="">
                 <% if(usuario.length != 0){ %>
                 <div class="usuario">
                     <div class="Nombre"><%= usuario.nombre %></div>

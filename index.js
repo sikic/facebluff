@@ -11,6 +11,7 @@ const ficherosEstaticos = path.join(__dirname, "public");
 const session = require('express-session');
 const expressValidator = require("express-validator");
 const miRouter1 = require("./router1");
+
 //sesiones
 const mysqlSession = require("express-mysql-session");
 const MySQLStore = mysqlSession(session);

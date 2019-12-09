@@ -9,7 +9,7 @@ const expressValidator = require("express-validator");
 const mod = new modelo(pool);
 
 function login(request, response) {
-    response.render("login", { message: null });
+    response.render("login", { message: null,points : request.session.puntos });
 }
 
 function amigos(request, response) {
@@ -24,7 +24,7 @@ function amigos(request, response) {
                 else {
                     console.log(amistades);
                     console.log(resultado);
-                    response.render("amigos", { usuarios: resultado, amigos: amistades });
+                    response.render("amigos", { usuarios: resultado, amigos: amistades, points : request.session.puntos });
                 }
             });
         }
@@ -33,7 +33,7 @@ function amigos(request, response) {
 function mostrarFormulario(request, response) {
     var usuarioLog = true;
     if (request.session.currentUser === undefined || request.session.currentUser == -1) usuarioLog = false;
-    response.render("formulario", { usuarioLogeado: usuarioLog });
+    response.render("formulario", { usuarioLogeado: usuarioLog , points : request.session.puntos });
 }
 
 function comprobar(request, response, next) {
@@ -50,7 +50,7 @@ function perfil(request, response) {
         if (err)
             console.log(err.message);
         else{
-            response.render("perfil",{usuario : resultado} );
+            response.render("perfil",{usuario : resultado, points : request.session.puntos, imagen : request.session.foto} );
         }
 
     });
@@ -63,7 +63,7 @@ function perfilLogueado(request,response){
                 console.log(err.message);
             else{
                 console.log(resultado);
-                response.render("perfil",{usuario : resultado} );
+                response.render("perfil",{usuario : resultado, points : request.session.puntos,imagen : request.session.foto } );
             }
     
         });
@@ -89,6 +89,7 @@ function check(request, response) {
             if (resultado != null) {
                 response.status(200);
                 request.session.currentUser = resultado.id;
+                request.session.puntos = resultado.puntos;
                 response.redirect("/perfil/" + resultado.id);
             }
             else {
@@ -120,8 +121,10 @@ function formulario_post(request, response) {
         contraseña: request.body.contraseña,
         fechaNacimiento: request.body.fechaNacimiento,
         sexo: request.body.s,
-        fotoPerfil: request.body.fotoPerfil,
         puntos: 0
+    }
+    if(request.file){
+        usuarioNuevo.fotoPerfil = request.file.filename;
     }
 
     if (request.session.currentUser === undefined || request.session.currentUser == -1) {
@@ -131,6 +134,8 @@ function formulario_post(request, response) {
             else {
                 response.status(200);
                 request.session.currentUser = resultado;
+                request.session.puntos = 0;
+                request.session.foto = request.file.filename;
                 response.redirect("/perfil");
             }
         });
@@ -155,7 +160,7 @@ function busqueda(request, response) {
         if (err)
             console.log(err.message);
         else {
-            response.render("busqueda", { usuarios: resultado, cad: request.query.busqueda });
+            response.render("busqueda", { usuarios: resultado, cad: request.query.busqueda, p : request.session.puntos });
         }
     });
 }
@@ -196,7 +201,7 @@ function preguntasRandom(request, response) {
         if (err)
             console.log(err.message);
         else {
-            response.render("listadoPreguntas", { preguntas: resultado });
+            response.render("listadoPreguntas", { preguntas: resultado, points : request.session.puntos });
         }
     });
 }
@@ -210,7 +215,7 @@ function viewQuestion(request, response) {
                 if (err)
                     console.log(err.message);
                 else
-                    response.render("responderAmi", { pregunta: descripcion, respuestas: resultado, idPregunta: request.params.id });
+                    response.render("responderAmi", { pregunta: descripcion, respuestas: resultado, idPregunta: request.params.id, points : request.session.puntos });
             });
         }
     });
@@ -309,7 +314,7 @@ function adminQuestions(request, response) {
                                                 lista[i].x = -1;
                                         }
                                     });
-                                    response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista, id: request.params.id })
+                                    response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista, id: request.params.id , points : request.session.puntos })
                                 }
                             });
                         }
@@ -338,7 +343,7 @@ function adivina(request, response) {
                         if (err)
                             console.log(err.message);
                         else
-                            response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre,id:idPregunta });
+                            response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre,id:idPregunta, points : request.session.puntos });
                     });
                 }
             });
@@ -358,7 +363,7 @@ function anadircuaternaria(request, response) {
         }
     });
 }
-    }
+    
 module.exports = {
     log: login,
     log_post: check,
@@ -378,7 +383,7 @@ module.exports = {
     newQuestion : showNewQuestion,
     procesarNewQuestion:newQuestion,
     mostrarPerfil : perfil,
-    mostrarPerfilLogueado : perfilLogueado
+    mostrarPerfilLogueado : perfilLogueado,
     adivinar: adivina,
     newQuestion: showNewQuestion,
     procesarNewQuestion: newQuestion,
