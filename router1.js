@@ -16,9 +16,9 @@ router1.post("/login_post",controlador.log_post);
 //Coge los datos del formulario y o crea un nuevo usuario o modifica uno existente.
 router1.post("/procesar_post",[
     check("email","El email no puede estar vacio").isEmpty(),
-    check("nombre","El nombre no puede estar vacio").not().isEmpty(),
-    check("s","El sexo no puede estar vacio").not().isEmpty(),
-    check("contraseña","La contraseña debe contener un minimo de 4 caracteres").isLength({ min: 4 }),
+    check("nombre","El nombre no puede estar vacio").isEmpty(),
+    check("s","El sexo no puede estar vacio").isEmpty(),
+    //check("contraseña","La contraseña debe contener un minimo de 4 caracteres").isLength({ min: 4 }),
     check("contraseña","La contraseña no puede estar vacia").isEmpty()
 ],multerFactory.single("fotoPerfil"),controlador.formulario);
 //Funcion que nos muestra el perfil de los amigos etc...
