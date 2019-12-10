@@ -4,6 +4,9 @@ const controlador = require("./controlador");
 const path = require("path");
 const multer = require("multer");
 const multerFactory = multer({dest: path.join(__dirname, "uploads") });
+const { check, validationResult } = require('express-validator');
+const { body } = require('express-validator');
+
 //se encarga de mostrar el formulario de login
 router1.get("/login", controlador.log);
 //Muestra el formulario de Nuevo usuario y el de modificar Perfil
@@ -11,7 +14,13 @@ router1.get("/formulario", controlador.mostrarform);
 //coge los datos y comprueba si el usuario y la password estan bien
 router1.post("/login_post",controlador.log_post);
 //Coge los datos del formulario y o crea un nuevo usuario o modifica uno existente.
-router1.post("/procesar_post",multerFactory.single("fotoPerfil"),controlador.formulario);
+router1.post("/procesar_post",[
+    check("email","El email no puede estar vacio").isEmpty(),
+    check("nombre","El nombre no puede estar vacio").not().isEmpty(),
+    check("s","El sexo no puede estar vacio").not().isEmpty(),
+    check("contraseña","La contraseña debe contener un minimo de 4 caracteres").isLength({ min: 4 }),
+    check("contraseña","La contraseña no puede estar vacia").isEmpty()
+],multerFactory.single("fotoPerfil"),controlador.formulario);
 //Funcion que nos muestra el perfil de los amigos etc...
 router1.get("/perfil/:id",controlador.mostrarPerfil);
 //Funcion que nos muestra nuestro propio perfil
