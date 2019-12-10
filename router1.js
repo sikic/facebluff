@@ -40,6 +40,7 @@ router1.get("/rechazar/:id",controlador.rechazar_Amistad);
 //Imagenes
 router1.get("/imagen/:id", function(request, response) {
     let pathImg = path.join(__dirname, "uploads", request.params.id);
+    console.log(request.params.id);
     response.sendFile(pathImg);
     });
 
