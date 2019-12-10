@@ -19,7 +19,8 @@ const sessionStore = new MySQLStore({
     host: config.mysqlConfig.host,
     user: config.mysqlConfig.user,
     password: config.mysqlConfig.password,
-    database: config.mysqlConfig.database });
+    database: config.mysqlConfig.database
+});
 
 app.use(session({
     secret: 'keyboard cat',
@@ -50,14 +51,14 @@ app.use(controlador.estaLogeado);
 
 
 
-app.get("/preguntas",controlador.preguntasAleatorias);
-app.get("/newReply/:id",controlador.addReply);
-app.get("/viewQuestion/:id",controlador.verPregunta);
-app.get("/newQuestion",controlador.newQuestion);
-app.get("/procesarNewQuestion",controlador.procesarNewQuestion);
-app.get("/administrarPreguntas/:id",controlador.adminPreguntas);
-app.get("/adivinarRespuesta/:id",controlador.adivinar);
-app.get("/newReplyToUser/:id",controlador.addCuaternaria);
+app.get("/preguntas", controlador.preguntasAleatorias);
+app.get("/newReply/:id", controlador.addReply);
+app.get("/viewQuestion/:id", controlador.verPregunta);
+app.get("/newQuestion", controlador.newQuestion);
+app.get("/procesarNewQuestion", controlador.procesarNewQuestion);
+app.get("/administrarPreguntas/:id", controlador.adminPreguntas);
+app.get("/adivinarRespuesta/:id", controlador.adivinar);
+app.get("/newReplyToUser/:id", controlador.addCuaternaria);
 
 
 
@@ -70,11 +71,11 @@ app.get("/newReplyToUser/:id",controlador.addCuaternaria);
 function error500(error, request, response, next) {
     // Código 500: Internal server error
     response.status(500);
-    response.render("error500", {mensaje: error.message,pila: error.stack});
+    response.render("error500", { mensaje: error.message, pila: error.stack });
 }
 
 //para el error 404
-app.use(controlador.error404);
+// app.use(controlador.error404);
 //app.use(error500);
 
 app.listen(3000, function (err) {
