@@ -270,7 +270,7 @@ function newQuestion(request, response) {
 
 function adminQuestions(request, response) {
     //cogemos la descripcion de la pregunta
-    mod.getAskDescription(request.params.id, function (err, descripcion) {
+    mod.getAskDescription(request.params.id, function (err, descripcion){
         var respondido;
         if (err)
             console.log(err);
@@ -343,7 +343,7 @@ function adivina(request, response) {
                         if (err)
                             console.log(err.message);
                         else
-                            response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre,id:idPregunta, points : request.session.puntos });
+                            response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre,id:idPregunta,idUser:idUsuario });
                     });
                 }
             });
@@ -351,8 +351,12 @@ function adivina(request, response) {
     });
 }
 
-function anadircuaternaria(request, response) {
-    request.body.radio;
+function anadircuaternaria(request, response){
+    var frase = request.query.pregunta.split("/");
+    var idUsuario = frase[2];
+    var idPregunta = request.params.id;
+    var idRespuesta = frase[1];
+
     //añadimos que el usuario actual a respondido sobre otro usuario    
     mod.addReplytoCuaternaria(request.session.currentUser, idUsuario, idPregunta, idRespuesta, function (err, resultado) {
         if (err) {

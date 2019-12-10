@@ -65,6 +65,7 @@ a {
 .usuario {
     font-weight: bold;
     font-size: 2em;
+    margin-left: 3%;
 }
 
 .modificar {
