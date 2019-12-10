@@ -11,7 +11,6 @@ const mod = new modelo(pool);
 function login(request, response) {
     response.render("login", { message: null,points : request.session.puntos });
 }
-
 function amigos(request, response) {
 
     mod.getSolicitudes(request.session.currentUser, function (err, resultado) {
@@ -50,7 +49,8 @@ function perfil(request, response) {
         if (err)
             console.log(err.message);
         else{
-            response.render("perfil",{usuario : resultado, points : request.session.puntos, imagen : request.session.foto} );
+
+            response.render("perfil",{usuario : resultado, points : request.session.puntos, imagen : resultado.fotoPerfil} );
         }
 
     });
@@ -62,8 +62,8 @@ function perfilLogueado(request,response){
             if(err)
                 console.log(err.message);
             else{
-                console.log(resultado);
-                response.render("perfil",{usuario : resultado, points : request.session.puntos,imagen : request.session.foto } );
+                console.log(request.session.foto);
+                response.render("perfil",{usuario : resultado, points : request.session.puntos,imagen : resultado.fotoPerfil } );
             }
     
         });
