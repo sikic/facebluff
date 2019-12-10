@@ -5,7 +5,7 @@ const mysql = require("mysql");
 const config = require("./config");
 const pool = mysql.createPool(config.mysqlConfig);
 //creacion de obj para validacion de formularios
-const expressValidator = require("express-validator");
+const {validationResult} = require("express-validator");
 const mod = new modelo(pool);
 
 function login(request, response) {
@@ -31,8 +31,9 @@ function amigos(request, response) {
 }
 function mostrarFormulario(request, response) {
     var usuarioLog = true;
+    var aux = [];
     if (request.session.currentUser === undefined || request.session.currentUser == -1) usuarioLog = false;
-    response.render("formulario", { usuarioLogeado: usuarioLog , points : request.session.puntos });
+    response.render("formulario", { usuarioLogeado: usuarioLog , points : request.session.puntos, errores : aux });
 }
 
 function comprobar(request, response, next) {
@@ -75,7 +76,8 @@ function salir(request, response) {
     response.redirect("/login");
 }
 
-function check(request, response) {
+function check(request,response) {
+    
     let usuario = {
         email: request.body.email,
         password: request.body.contraseña
@@ -113,44 +115,52 @@ function e404(request, response, next) {
 
 function formulario_post(request, response) {
 
-    // request.checkBody("email", "Falta rellenar el email").notEmpty();
+    const errors = validationResult(request).array();
+    var x = true;
+    if (request.session.currentUser === undefined || request.session.currentUser == -1)
+        x = false;
+    if(errors.length == 0){//no hay ningun error por lo tanto se puede proseguir
 
-    let usuarioNuevo = {
-        nombre: request.body.nombre,
-        email: request.body.email,
-        contraseña: request.body.contraseña,
-        fechaNacimiento: request.body.fechaNacimiento,
-        sexo: request.body.s,
-        puntos: 0
-    }
-    if(request.file){
-        usuarioNuevo.fotoPerfil = request.file.filename;
-    }
+        let usuarioNuevo = {
+            nombre: request.body.nombre,
+            email: request.body.email,
+            contraseña: request.body.contraseña,
+            fechaNacimiento: request.body.fechaNacimiento,
+            sexo: request.body.s,
+            puntos: 0
+        }
+        if(request.file){
+            usuarioNuevo.fotoPerfil = request.file.filename;
+        }
+    
+        if (!x) {
+            mod.insertUser(usuarioNuevo, function (err, resultado) {
+                if (err)
+                    console.log(err.message);
+                else {
+                    response.status(200);
+                    request.session.currentUser = resultado;
+                    request.session.puntos = 0;
+                    request.session.foto = request.file.filename;
+                    response.redirect("/perfil");
+                }
+            });
+        }
+        else {
+            //
+            usuarioNuevo.id = request.session.currentUser;
+            mod.modificarUser(usuarioNuevo, function (err, resultado) {
+                if (err)
+                    console.log(err.message);
+                else {
+                    response.status(200);
+                    response.redirect("/perfil");
+                }
+            });
+        }
+    }else{ //hay errores y hay que renderizar la pag de formulario
+        response.render("formulario", { usuarioLogeado: x , points : request.session.puntos, errores : errors });
 
-    if (request.session.currentUser === undefined || request.session.currentUser == -1) {
-        mod.insertUser(usuarioNuevo, function (err, resultado) {
-            if (err)
-                console.log(err.message);
-            else {
-                response.status(200);
-                request.session.currentUser = resultado;
-                request.session.puntos = 0;
-                request.session.foto = request.file.filename;
-                response.redirect("/perfil");
-            }
-        });
-    }
-    else {
-        //
-        usuarioNuevo.id = request.session.currentUser;
-        mod.modificarUser(usuarioNuevo, function (err, resultado) {
-            if (err)
-                console.log(err.message);
-            else {
-                response.status(200);
-                response.redirect("/perfil");
-            }
-        });
     }
 }
 
