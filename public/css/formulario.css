@@ -1,11 +1,13 @@
 @import url('https://fonts.googleapis.com/css?family=Patrick+Hand&display=swap');
 * {
-    /* border: 1px solid red;  */
+ /* border: 1px solid red;   */
     margin: 0;
     padding: 0;
     font-family: 'Patrick Hand', cursive;
 }
-
+.icono{
+    color: rgb(59, 5, 5);
+}
 body {
     background-image: url(../img/fondo.jpg);
 }
@@ -25,6 +27,13 @@ li:hover() {
 
 .principal {
     margin-top: 13.5%;
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.principal1 {
+    margin-top: 0.5%;
     width: 40%;
     margin-left: auto;
     margin-right: auto;
@@ -93,4 +102,21 @@ input[type="submit"]:hover {
     40%, 60% {
         transform: translate3d(5px, 0, 0);
     }
+}
+
+.error{
+    margin-top: 12%;
+    width: 60%;
+    margin-left: 15%;
+    padding: 1%;
+    border: 2px solid red;
+    background-color: rgb(199, 65, 83);
+}
+
+.titulo{
+    display: flex;
+    justify-content: center;
+    background-color: gray;
+    border: 1px dashed black;
+    margin-bottom: 1%;
 }

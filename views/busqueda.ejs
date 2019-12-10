@@ -26,7 +26,7 @@
         <div class="usuario">
             <% usuarios.forEach(elm => { %>
             <div id="usuario1">
-                <img src="../img/<%= elm.fotoPerfil %>" alt="" class="fotoPerfil">
+                <img src="/imagen/<%= elm.fotoPerfil %>" alt="" class="fotoPerfil">
                 <span><a href="/perfil/<%= elm.id %>"><%= elm.nombre %></a></span>
                 <div class="botones">
                     <a href="/procesar_solicitud/<%= elm.id %> ">Solicitar amistad</a>

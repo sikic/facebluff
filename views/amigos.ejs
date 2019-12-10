@@ -6,7 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="/css/amigos.css">
+    <link rel="shortcut icon" href="/img/uchiha.png" type="image/x-icon">
     <script src="https://kit.fontawesome.com/d089f45b77.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://anijs.github.io/lib/anicollection/anicollection.css">
+    <script src="anijs-min.js"></script>
     <title>Solicitudes</title>
 </head>
 
@@ -15,7 +18,7 @@
     <body>
         <%- include("header",{points : 100}) %>
         <div class="solicitudes centro">
-        <h1>Solicitudes de amistad</h1>
+        <h1 data-anijs="if: click, do: flipInY animated">Solicitudes de amistad</h1>
     </div>
 
     <% if(usuarios.length == 0){ %>
@@ -28,7 +31,7 @@
 
         <% usuarios.forEach(elm=>{ %>
         <div class="usuario">
-            <img src="../img/<%= elm.fotoPerfil %>" alt="" class="fotoPerfil">
+            <img src="/imagen/<%= elm.fotoPerfil %>" alt="" class="fotoPerfil">
             <span> <a href="/perfil/<%= elm.id %>" class="texto"><%= elm.nombre %></a></span>
             <div id="botones">
                 <a href="/aceptar/<%= elm.id %>">Aceptar</a>
@@ -63,7 +66,7 @@
     <div class="lista_amigos">
         <% amigos.forEach(e=>{ %>
         <div>
-            <img src="../img/<%= e.fotoPerfil %>" alt="" class="fotoPerfil">
+            <img src="/imagen/<%= e.fotoPerfil %>" alt="" class="fotoPerfil">
             <span> <a href="/perfil/<%= e.id %>" class="texto"><%= e.nombre %></a></span>
         </div>
 
