@@ -5,11 +5,12 @@ const mysql = require("mysql");
 const config = require("./config");
 const pool = mysql.createPool(config.mysqlConfig);
 //creacion de obj para validacion de formularios
-const {validationResult} = require("express-validator");
+const { validationResult } = require("express-validator");
 const mod = new modelo(pool);
+let _ = require("underscore");
 
 function login(request, response) {
-    response.render("login", { message: null,points : request.session.puntos });
+    response.render("login", { message: null, points: request.session.puntos });
 }
 function amigos(request, response) {
 
@@ -23,7 +24,7 @@ function amigos(request, response) {
                 else {
                     console.log(amistades);
                     console.log(resultado);
-                    response.render("amigos", { usuarios: resultado, amigos: amistades, points : request.session.puntos });
+                    response.render("amigos", { usuarios: resultado, amigos: amistades, points: request.session.puntos });
                 }
             });
         }
@@ -33,7 +34,7 @@ function mostrarFormulario(request, response) {
     var usuarioLog = true;
     var aux = [];
     if (request.session.currentUser === undefined || request.session.currentUser == -1) usuarioLog = false;
-    response.render("formulario", { usuarioLogeado: usuarioLog , points : request.session.puntos, errores : aux });
+    response.render("formulario", { usuarioLogeado: usuarioLog, points: request.session.puntos, errores: aux });
 }
 
 function comprobar(request, response, next) {
@@ -49,26 +50,26 @@ function perfil(request, response) {
     mod.getDataUser(request.params.id, function (err, resultado) {
         if (err)
             console.log(err.message);
-        else{
+        else {
 
-            response.render("perfil",{usuario : resultado, points : request.session.puntos, imagen : resultado.fotoPerfil} );
+            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil });
         }
 
     });
 
 }
-function perfilLogueado(request,response){
-    
-        mod.getDataUser(request.session.currentUser,function(err,resultado){
-            if(err)
-                console.log(err.message);
-            else{
-                console.log(request.session.foto);
-                response.render("perfil",{usuario : resultado, points : request.session.puntos,imagen : resultado.fotoPerfil } );
-            }
-    
-        });
-    
+function perfilLogueado(request, response) {
+
+    mod.getDataUser(request.session.currentUser, function (err, resultado) {
+        if (err)
+            console.log(err.message);
+        else {
+            console.log(request.session.foto);
+            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil });
+        }
+
+    });
+
 }
 
 function salir(request, response) {
@@ -76,8 +77,8 @@ function salir(request, response) {
     response.redirect("/login");
 }
 
-function check(request,response) {
-    
+function check(request, response) {
+
     let usuario = {
         email: request.body.email,
         password: request.body.contraseña
@@ -119,7 +120,7 @@ function formulario_post(request, response) {
     var x = true;
     if (request.session.currentUser === undefined || request.session.currentUser == -1)
         x = false;
-    if(errors.length == 0){//no hay ningun error por lo tanto se puede proseguir
+    if (errors.length == 0) {//no hay ningun error por lo tanto se puede proseguir
 
         let usuarioNuevo = {
             nombre: request.body.nombre,
@@ -129,10 +130,10 @@ function formulario_post(request, response) {
             sexo: request.body.s,
             puntos: 0
         }
-        if(request.file){
+        if (request.file) {
             usuarioNuevo.fotoPerfil = request.file.filename;
         }
-    
+
         if (!x) {
             mod.insertUser(usuarioNuevo, function (err, resultado) {
                 if (err)
@@ -158,8 +159,8 @@ function formulario_post(request, response) {
                 }
             });
         }
-    }else{ //hay errores y hay que renderizar la pag de formulario
-        response.render("formulario", { usuarioLogeado: x , points : request.session.puntos, errores : errors });
+    } else { //hay errores y hay que renderizar la pag de formulario
+        response.render("formulario", { usuarioLogeado: x, points: request.session.puntos, errores: errors });
 
     }
 }
@@ -170,7 +171,9 @@ function busqueda(request, response) {
         if (err)
             console.log(err.message);
         else {
-            response.render("busqueda", { usuarios: resultado, cad: request.query.busqueda, p : request.session.puntos });
+            var i = _.findIndex(resultado, n => n.id == request.session.currentUser);
+            resultado.splice(i, 1);
+            response.render("busqueda", { usuarios: resultado, cad: request.query.busqueda, p: request.session.puntos });
         }
     });
 }
@@ -211,7 +214,7 @@ function preguntasRandom(request, response) {
         if (err)
             console.log(err.message);
         else {
-            response.render("listadoPreguntas", { preguntas: resultado, points : request.session.puntos });
+            response.render("listadoPreguntas", { preguntas: resultado, points: request.session.puntos });
         }
     });
 }
@@ -225,7 +228,7 @@ function viewQuestion(request, response) {
                 if (err)
                     console.log(err.message);
                 else
-                    response.render("responderAmi", { pregunta: descripcion, respuestas: resultado, idPregunta: request.params.id, points : request.session.puntos });
+                    response.render("responderAmi", { pregunta: descripcion, respuestas: resultado, idPregunta: request.params.id, points: request.session.puntos });
             });
         }
     });
@@ -280,7 +283,7 @@ function newQuestion(request, response) {
 
 function adminQuestions(request, response) {
     //cogemos la descripcion de la pregunta
-    mod.getAskDescription(request.params.id, function (err, descripcion){
+    mod.getAskDescription(request.params.id, function (err, descripcion) {
         var respondido;
         if (err)
             console.log(err);
@@ -307,7 +310,10 @@ function adminQuestions(request, response) {
                                 if (err)
                                     console.log(err.message);
                                 else {
-                                    lista.forEach((elm, i) => {
+                                    var lista1 = lista.filter(onlyUnique);
+                                    var i = _.findIndex(lista1, n => n.id == request.session.currentUser);
+                                    lista1.splice(i, 1);
+                                    lista1.forEach((elm, i) => {
                                         var encontrado = ar.some(n => {
                                             if (n.idUsuario2 == elm.id) {
                                                 return true;
@@ -316,15 +322,15 @@ function adminQuestions(request, response) {
 
                                         });
                                         if (!encontrado) //no lo ha encontrado por lo tanto aun esta sin intentar adivinar
-                                            lista[i].x = 0;
+                                            lista1[i].x = 0;
                                         else {
                                             if (ar[i].miRespuesta == ar[i].respuestaReal) {// las respuesta coinciden por lo tanto he acertao
-                                                lista[i].x = 1;
+                                                lista1[i].x = 1;
                                             } else
                                                 lista[i].x = -1;
                                         }
                                     });
-                                    response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista, id: request.params.id , points : request.session.puntos })
+                                    response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista1, id: request.params.id, points: request.session.puntos })
                                 }
                             });
                         }
@@ -333,6 +339,9 @@ function adminQuestions(request, response) {
             });
         }
     });
+}
+function onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
 }
 
 function adivina(request, response) {
@@ -353,7 +362,7 @@ function adivina(request, response) {
                         if (err)
                             console.log(err.message);
                         else
-                            response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre,id:idPregunta,idUser:idUsuario });
+                            response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre, id: idPregunta, idUser: idUsuario });
                     });
                 }
             });
@@ -361,7 +370,7 @@ function adivina(request, response) {
     });
 }
 
-function anadircuaternaria(request, response){
+function anadircuaternaria(request, response) {
     var frase = request.query.pregunta.split("/");
     var idUsuario = frase[2];
     var idPregunta = request.params.id;
@@ -377,7 +386,7 @@ function anadircuaternaria(request, response){
         }
     });
 }
-    
+
 module.exports = {
     log: login,
     log_post: check,
@@ -394,10 +403,10 @@ module.exports = {
     mostrarform: mostrarFormulario,
     verPregunta: viewQuestion,
     addReply: newReply,
-    newQuestion : showNewQuestion,
-    procesarNewQuestion:newQuestion,
-    mostrarPerfil : perfil,
-    mostrarPerfilLogueado : perfilLogueado,
+    newQuestion: showNewQuestion,
+    procesarNewQuestion: newQuestion,
+    mostrarPerfil: perfil,
+    mostrarPerfilLogueado: perfilLogueado,
     adivinar: adivina,
     newQuestion: showNewQuestion,
     procesarNewQuestion: newQuestion,
