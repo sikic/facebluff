@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/nuevaPregunta.css">
+    <title>Document</title>
+</head>
+<body>
+         <%- include("header",{points : 100}) %> 
+
+        <div class="principal">
+            <div class="formulario">
+                <form action="/procesarNewQuestion" method="get">
+                <label for="">
+                    introduzca la pregunta:
+                </label>
+        
+                <input type="text" name="pregunta">
+                <div class="centro">
+                    <input type="submit" value="Guardar">
+                </div>
+                </form>
+            </div>
+        </div>
+</body>
+</html>

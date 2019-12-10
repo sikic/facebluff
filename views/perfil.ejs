@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="css/perfil.css">
+    <link rel="stylesheet" href="/css/perfil.css">
     <title>Perfil</title>
 </head>
 
@@ -13,16 +13,16 @@
 
     <body>
 
-        <%- include("header",{points : 100}) %>
+        <%- include("header",{points : usuario.puntos}) %>
         <div class="centro">
-            <% if(usuario.fotoPerfil != null){ %>
+            <% if(imagen){ %>
             <div class="tuperfil">
                 <h1>Tu Perfil</h1>
             </div>
             <% }%>
             <div class="datos">
 
-                <img src="../img/<%= usuario.fotoPerfil %>" alt="">
+                <img src="/imagen/<%= imagen %>" alt="">
                 <% if(usuario.length != 0){ %>
                 <div class="usuario">
                     <div class="Nombre"><%= usuario.nombre %></div>
@@ -32,7 +32,7 @@
                 </div>
                 <% } %>
             </div>
-            <div class="Boton"> <a href="" class="modificar">Modificar perfil</a></div>
+            <div class="Boton"> <a href="/formulario" class="modificar">Modificar perfil</a></div>
         </div>
     </body>
 

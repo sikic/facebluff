@@ -106,7 +106,17 @@ input[type="submit"]{
 
 .notiene {
     color: red;
-    margin-left: 20%; 
 }
 
-
+.texto { 
+    margin-left: 1%;
+    font-family: 'Patrick Hand', cursive;
+    padding:0;
+    border: 0;
+    color: black;
+    background-color: transparent;
+}
+.texto:hover{
+    background-color:transparent !important;
+    color: rgb(224, 64, 64);
+}

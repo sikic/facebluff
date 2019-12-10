@@ -1,17 +1,31 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const config = require("./config");
+const mysql = require("mysql");
+const pool = mysql.createPool(config.mysqlConfig);
 const bodyParser = require("body-parser");
 const app = express();
 const controlador = require("./controlador");
 const ficherosEstaticos = path.join(__dirname, "public");
 const session = require('express-session');
 const expressValidator = require("express-validator");
+const miRouter1 = require("./router1");
+
+//sesiones
+const mysqlSession = require("express-mysql-session");
+const MySQLStore = mysqlSession(session);
+const sessionStore = new MySQLStore({
+    host: config.mysqlConfig.host,
+    user: config.mysqlConfig.user,
+    password: config.mysqlConfig.password,
+    database: config.mysqlConfig.database });
 
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    store: sessionStore
 }));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -23,36 +37,41 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //middleware estatico
 app.use(express.static(ficherosEstaticos));
 
-//se encarga de mostrar el formulario de login
-app.get("/login", controlador.log);
-//coge los datos y comprueba si el usuario y la password estan bien
-app.post("/login_post",controlador.log_post);
-//funcion que no permite el paso a el resto de funciones
-app.use(controlador.estaLogeado);
 
+//Usamos el router1(Apartado 1 de la practica)
+app.use(miRouter1);
+//vista de perfil
+app.use(controlador.estaLogeado);
 
 
 //validador de datos
 // app.use(expressValidator());
-app.post("/procesar_post", controlador.formulario);
-
 //vista amigos
-app.get("/amigos",controlador.friends);
-app.get("/procesarBusqueda", controlador.buscar);
-app.get("/log_out",controlador.exit);
+
+
+
+app.get("/preguntas",controlador.preguntasAleatorias);
+app.get("/newReply/:id",controlador.addReply);
+app.get("/viewQuestion/:id",controlador.verPregunta);
+app.get("/newQuestion",controlador.newQuestion);
+app.get("/procesarNewQuestion",controlador.procesarNewQuestion);
+app.get("/administrarPreguntas/:id",controlador.adminPreguntas);
+app.get("/adivinarRespuesta/:id",controlador.adivinar);
+app.get("/newReplyToUser/:id",controlador.addCuaternaria);
+
+
+
+
+
+
 
 //-----
-//vista de perfil
-//app.get("/perfil".controlador.)
+
 function error500(error, request, response, next) {
     // Código 500: Internal server error
     response.status(500);
-    response.render("error500", {
-        mensaje: error.message,
-        pila: error.stack
-    }
-    )
-};
+    response.render("error500", {mensaje: error.message,pila: error.stack});
+}
 
 //para el error 404
 app.use(controlador.error404);

@@ -13,7 +13,7 @@
 
     <body>
 
-        <%- include("header",{points : 100}) %>
+        <%- include("header",{points :  p }) %>
 
         <div class="resultados centro">
             <h1>Resultados de búsqueda: '<%= cad %>'</h1>
@@ -27,9 +27,9 @@
             <% usuarios.forEach(elm => { %>
             <div id="usuario1">
                 <img src="../img/<%= elm.fotoPerfil %>" alt="" class="fotoPerfil">
-                <span><%= elm.nombre %></span>
+                <span><a href="/perfil/<%= elm.id %>"><%= elm.nombre %></a></span>
                 <div class="botones">
-                    <a href="">Solicitar amistad</a>
+                    <a href="/procesar_solicitud/<%= elm.id %> ">Solicitar amistad</a>
                 </div>
             </div>
             <% }); %>

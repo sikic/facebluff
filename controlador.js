@@ -9,25 +9,31 @@ const expressValidator = require("express-validator");
 const mod = new modelo(pool);
 
 function login(request, response) {
-    response.render("login", { message: null });
+    response.render("login", { message: null,points : request.session.puntos });
 }
 
 function amigos(request, response) {
-    //PRUEBAALLLLL
 
     mod.getSolicitudes(request.session.currentUser, function (err, resultado) {
         if (err)
             console.log(err.message);
         else {
-            mod.getFriends(request.session.currentUser,function(err,amistades){
+            mod.getFriends(request.session.currentUser, function (err, amistades) {
                 if (err)
-                console.log(err.message);
-                else{
-                    response.render("amigos", { usuarios: resultado,amigos:amistades });
+                    console.log(err.message);
+                else {
+                    console.log(amistades);
+                    console.log(resultado);
+                    response.render("amigos", { usuarios: resultado, amigos: amistades, points : request.session.puntos });
                 }
             });
         }
     });
+}
+function mostrarFormulario(request, response) {
+    var usuarioLog = true;
+    if (request.session.currentUser === undefined || request.session.currentUser == -1) usuarioLog = false;
+    response.render("formulario", { usuarioLogeado: usuarioLog , points : request.session.puntos });
 }
 
 function comprobar(request, response, next) {
@@ -40,10 +46,31 @@ function comprobar(request, response, next) {
     }
 }
 function perfil(request, response) {
-    response.render("perfil", { message: null });
+    mod.getDataUser(request.params.id, function (err, resultado) {
+        if (err)
+            console.log(err.message);
+        else{
+            response.render("perfil",{usuario : resultado, points : request.session.puntos, imagen : request.session.foto} );
+        }
+
+    });
+
+}
+function perfilLogueado(request,response){
+    
+        mod.getDataUser(request.session.currentUser,function(err,resultado){
+            if(err)
+                console.log(err.message);
+            else{
+                console.log(resultado);
+                response.render("perfil",{usuario : resultado, points : request.session.puntos,imagen : request.session.foto } );
+            }
+    
+        });
+    
 }
 
-function salir(request, response){
+function salir(request, response) {
     request.session.currentUser = -1;
     response.redirect("/login");
 }
@@ -62,7 +89,8 @@ function check(request, response) {
             if (resultado != null) {
                 response.status(200);
                 request.session.currentUser = resultado.id;
-                response.render("perfil", { usuario: resultado })
+                request.session.puntos = resultado.puntos;
+                response.redirect("/perfil/" + resultado.id);
             }
             else {
                 response.status(200);
@@ -85,7 +113,7 @@ function e404(request, response, next) {
 
 function formulario_post(request, response) {
 
-    request.checkBody("email", "Falta rellenar el email").notEmpty();
+    // request.checkBody("email", "Falta rellenar el email").notEmpty();
 
     let usuarioNuevo = {
         nombre: request.body.nombre,
@@ -93,34 +121,253 @@ function formulario_post(request, response) {
         contraseña: request.body.contraseña,
         fechaNacimiento: request.body.fechaNacimiento,
         sexo: request.body.s,
-        fotoPerfil: request.body.fotoPerfil,
         puntos: 0
     }
+    if(request.file){
+        usuarioNuevo.fotoPerfil = request.file.filename;
+    }
 
-    mod.insertUser(usuarioNuevo, function (err, resultado) {
+    if (request.session.currentUser === undefined || request.session.currentUser == -1) {
+        mod.insertUser(usuarioNuevo, function (err, resultado) {
+            if (err)
+                console.log(err.message);
+            else {
+                response.status(200);
+                request.session.currentUser = resultado;
+                request.session.puntos = 0;
+                request.session.foto = request.file.filename;
+                response.redirect("/perfil");
+            }
+        });
+    }
+    else {
+        //
+        usuarioNuevo.id = request.session.currentUser;
+        mod.modificarUser(usuarioNuevo, function (err, resultado) {
+            if (err)
+                console.log(err.message);
+            else {
+                response.status(200);
+                response.redirect("/perfil");
+            }
+        });
+    }
+}
+
+function busqueda(request, response) {
+    console.log(request.query.busqueda);
+    mod.search(request.query.busqueda, function (err, resultado) {
         if (err)
             console.log(err.message);
         else {
-            response.status(200);
-            request.session.currentUser = resultado;
-            //let edad = Date.now() - usuarioNuevo.fechaNacimiento.getTime();
-            //let anios = Math.round(edad / (1000 * 60 * 60 * 24) / 31 / 12);
-            //usuarioNuevo.fechaNacimiento = anios;
-            response.render("perfil", { usuario: usuarioNuevo })
+            response.render("busqueda", { usuarios: resultado, cad: request.query.busqueda, p : request.session.puntos });
         }
     });
 }
 
-function busqueda(request,response){
-    console.log(request.query.busqueda);
-    mod.search(request.query.busqueda,function(err,resultado){
-        if(err)
+function solicitarAmistad(request, response) {
+    mod.addSolicitud(request.session.currentUser, request.params.id, function (err) {
+        if (err)
             console.log(err.message);
-        else{
-            response.render("busqueda",{usuarios:resultado,cad:request.query.busqueda});
+        else {
+            response.redirect("/amigos");
         }
     });
 }
+
+function aceptarAmistad(request, response) {
+    mod.aceptarSolicitud(request.session.currentUser, request.params.id, function (err) {
+        if (err)
+            console.log(err.message);
+        else {
+            response.redirect("/amigos");
+        }
+    });
+}
+
+function rechazarAmistad(request, response) {
+    mod.rechazarSolicitud(request.session.currentUser, request.params.id, function (err) {
+        if (err)
+            console.log(err.message);
+        else {
+            console.log("rechazada");
+            response.redirect("/amigos");
+        }
+    });
+}
+
+function preguntasRandom(request, response) {
+    mod.randomQuestions(function (err, resultado) {
+        if (err)
+            console.log(err.message);
+        else {
+            response.render("listadoPreguntas", { preguntas: resultado, points : request.session.puntos });
+        }
+    });
+}
+
+function viewQuestion(request, response) {
+    mod.viewReplys(request.params.id, function (err, resultado) {
+        if (err)
+            console.log(err);
+        else {
+            mod.getAskDescription(request.params.id, function (err, descripcion) {
+                if (err)
+                    console.log(err.message);
+                else
+                    response.render("responderAmi", { pregunta: descripcion, respuestas: resultado, idPregunta: request.params.id, points : request.session.puntos });
+            });
+        }
+    });
+}
+
+function newReply(request, response) {
+    //como pasamos en el value de las respuestas su descripcion y su id separado por una barra procedemos para separarla
+    var frase = request.query.radio.split("/");
+    var descripcion = frase[0];
+    var idRespuesta = frase[1];
+    //añadimos esa respuesta a la tabla solo en caso de que sea la otra y guardamos lo que ha decicido el usuario
+    if (request.query.radio == "otra") {
+        mod.addReply(request.query.nueva, request.params.id, function (err, resultado) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                mod.addReplytoTable(request.session.currentUser, request.params.id, resultado, function (err) {
+                    if (err)
+                        console.log(err);
+                    else
+                        response.redirect("/preguntas");
+                });
+            }
+        });
+    } else {
+        //en caso de que sea una de las que vienen predefinidas no hace falta añadirla a la tabla de respuesta
+        //pero si a la ternaria
+        mod.addReplytoTable(request.session.currentUser, request.params.id, idRespuesta, function (err) {
+            if (err)
+                console.log(err);
+            else
+                response.redirect("/preguntas");
+        });
+
+    }
+
+}
+
+function showNewQuestion(request, response) {
+    response.render("nuevaPregunta");
+}
+
+function newQuestion(request, response) {
+    mod.addQuestion(request.query.pregunta, function (err) {
+        if (err)
+            console.log(err.message);
+        else
+            response.redirect("/preguntas");
+    });
+}
+
+function adminQuestions(request, response) {
+    //cogemos la descripcion de la pregunta
+    mod.getAskDescription(request.params.id, function (err, descripcion){
+        var respondido;
+        if (err)
+            console.log(err);
+        else {
+            //ahora hay que comprobar si el usuario actual ha respondido o no a la pregunta
+            mod.checkResponseOrNot(request.session.currentUser, request.params.id, function (err, resultado) {
+                if (err)
+                    console.log(err.message);
+                else {
+                    if (resultado.length == 0) { //el usuario actual aun respondido  a la pregunta
+                        respondido = false;
+                    } else {//el usuario si que ha respondido ya a la pregunta
+                        respondido = true;
+                    }
+                    //cogemos los amigos que hayan respondido a esas preguntas
+                    mod.getUsersToQuestion(request.params.id, function (err, lista) {
+                        if (err)
+                            console.log(err);
+                        else { //si que hay amigos que han contestado esa pregunta
+                            //hay que comprobar si lo que ellos han respondido coincide con lo que yo pienso que han
+                            //respondido o todavia no he intentado adivinar nada 
+                            //esta funcion devuelve un array con el id, mi respuesta sobre lo que puso y lo que realmente puso
+                            mod.adivinar(request.params.id, request.session.currentUser, function (err, ar) {
+                                if (err)
+                                    console.log(err.message);
+                                else {
+                                    lista.forEach((elm, i) => {
+                                        var encontrado = ar.some(n => {
+                                            if (n.idUsuario2 == elm.id) {
+                                                return true;
+                                            } else
+                                                return false;
+
+                                        });
+                                        if (!encontrado) //no lo ha encontrado por lo tanto aun esta sin intentar adivinar
+                                            lista[i].x = 0;
+                                        else {
+                                            if (ar[i].miRespuesta == ar[i].respuestaReal) {// las respuesta coinciden por lo tanto he acertao
+                                                lista[i].x = 1;
+                                            } else
+                                                lista[i].x = -1;
+                                        }
+                                    });
+                                    response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista, id: request.params.id , points : request.session.puntos })
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
+
+function adivina(request, response) {
+    //como pasamos en el value de las respuestas su descripcion y su id separado por una barra procedemos para separarla
+    var frase = request.params.id.split("*");
+    var idUsuario = frase[0];
+    var idPregunta = frase[1];
+    //cogemos la descripcion
+    mod.getAskDescription(idPregunta, function (err, descripcion) {
+        if (err)
+            console.log(err.message);
+        else {
+            mod.viewReplys(idPregunta, function (err, resultado) {
+                if (err)
+                    console.log(err.message);
+                else {
+                    mod.getDataUser(idUsuario, function (err, datos) {
+                        if (err)
+                            console.log(err.message);
+                        else
+                            response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre,id:idPregunta,idUser:idUsuario });
+                    });
+                }
+            });
+        }
+    });
+}
+
+function anadircuaternaria(request, response){
+    var frase = request.query.pregunta.split("/");
+    var idUsuario = frase[2];
+    var idPregunta = request.params.id;
+    var idRespuesta = frase[1];
+
+    //añadimos que el usuario actual a respondido sobre otro usuario    
+    mod.addReplytoCuaternaria(request.session.currentUser, idUsuario, idPregunta, idRespuesta, function (err, resultado) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            response.redirect("/administrarPreguntas/" + request.params.id);
+        }
+    });
+}
+    
 module.exports = {
     log: login,
     log_post: check,
@@ -128,6 +375,23 @@ module.exports = {
     formulario: formulario_post,
     friends: amigos,
     estaLogeado: comprobar,
-    buscar : busqueda,
-    exit :salir
+    buscar: busqueda,
+    exit: salir,
+    solicitar_Amistad: solicitarAmistad,
+    aceptar_Amistad: aceptarAmistad,
+    rechazar_Amistad: rechazarAmistad,
+    preguntasAleatorias: preguntasRandom,
+    mostrarform: mostrarFormulario,
+    verPregunta: viewQuestion,
+    addReply: newReply,
+    newQuestion : showNewQuestion,
+    procesarNewQuestion:newQuestion,
+    mostrarPerfil : perfil,
+    mostrarPerfilLogueado : perfilLogueado,
+    adivinar: adivina,
+    newQuestion: showNewQuestion,
+    procesarNewQuestion: newQuestion,
+    mostrarPerfil: perfil,
+    adminPreguntas: adminQuestions,
+    addCuaternaria: anadircuaternaria
 }
