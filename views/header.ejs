@@ -21,7 +21,9 @@
             <a href="/preguntas">Preguntas</a>
             <a href="/log_out">Desconectar</a>
             <div class="puntacos">
+                <% if(imagen != null){ %>
                 <span><img src="/imagen/<%= imagen %>"> </span> 
+                <% } %>
                 <span class="p"> <%= points %> PUNTOS </span>
             </div>
         </div>
