@@ -58,6 +58,7 @@ a {
 .Boton {
     display: flex;
     justify-content: center;
+    margin-bottom: 2%;
 }
 
 
@@ -70,4 +71,12 @@ a {
 
 .modificar {
     margin-top: 1em;
+}
+.f{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2%;
+}
+.subidas{
+    width: 300px;
 }

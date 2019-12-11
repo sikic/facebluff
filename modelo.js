@@ -1,4 +1,7 @@
 "use strict";
+const moment = require("moment");
+moment.locale('es');
+
 class modelo {
     constructor(pool) {
         this.pool = pool;
@@ -20,8 +23,14 @@ class modelo {
                     else {
                         var rs;
                         result.forEach(element => {
-                            let edad = Date.now() - element.fechaNacimiento.getTime();
-                            let anios = Math.round(edad / (1000 * 60 * 60 * 24) / 31 / 12);
+                            let f = moment(element.fechaNacimiento);
+                            let anios;
+                            if(f.format('YYYY') !== "Invalid date"){
+                                let edad = Date.now() - element.fechaNacimiento.getTime();
+                                anios = Math.round(edad / (1000 * 60 * 60 * 24) / 31 / 12);
+                            }else{
+                                anios = -1;
+                            }
                             let genero;
                             element.sexo == "masculino" ? genero = "Hombre" : genero = "Mujer";
                             rs = {
@@ -349,8 +358,14 @@ class modelo {
                     else {
                         var rs;
                         resultado.forEach(element => {
-                            let edad = Date.now() - element.fechaNacimiento.getTime();
-                            let anios = Math.round(edad / (1000 * 60 * 60 * 24) / 31 / 12);
+                            let anios;
+                            let f = moment(element.fechaNacimiento);
+                            if(f.format('YYYY') !== "Invalid date"){
+                                let edad = Date.now() - element.fechaNacimiento.getTime();
+                                anios = Math.round(edad / (1000 * 60 * 60 * 24) / 31 / 12);
+                            }else{
+                                anios = -1;
+                            }
                             let genero;
                             element.sexo == "masculino" ? genero = "Hombre" : genero = "Mujer";
                             rs = {

@@ -16,7 +16,7 @@ function amigos(request, response) {
 
     mod.getSolicitudes(request.session.currentUser, function (err, resultado) {
         if (err)
-            console.log(err.message);
+            next();
         else {
             mod.getFriends(request.session.currentUser, function (err, amistades) {
                 if (err)
@@ -24,7 +24,7 @@ function amigos(request, response) {
                 else {
                     console.log(amistades);
                     console.log(resultado);
-                    response.render("amigos", { usuarios: resultado, amigos: amistades, p: request.session.puntos, imagen : request.session.fotoPerfil });
+                    response.render("amigos", { usuarios: resultado, amigos: amistades, p: request.session.puntos, imagen: request.session.fotoPerfil });
                 }
             });
         }
@@ -51,8 +51,10 @@ function perfil(request, response) {
         if (err)
             console.log(err.message);
         else {
-            request.session.fotoPerfil = resultado.fotoPerfil;
-            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil });
+            var f =[];
+            f.push("5f83968a124d27c82c0c16d6ee84c8cd");
+            f.push("6cfe5518a8e8e76f1d01216fc76511ea");
+            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil ,fotosSubidas: f});
         }
 
     });
@@ -65,7 +67,10 @@ function perfilLogueado(request, response) {
             console.log(err.message);
         else {
             request.session.fotoPerfil = resultado.fotoPerfil;
-            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil });
+            var f =[];
+            f.push("5f83968a124d27c82c0c16d6ee84c8cd");
+            f.push("6cfe5518a8e8e76f1d01216fc76511ea");
+            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil,fotosSubidas: f});
         }
 
     });
@@ -140,11 +145,12 @@ function formulario_post(request, response) {
             mod.insertUser(usuarioNuevo, function (err, resultado) {
                 if (err)
                     console.log(err.message);
-                else {
+                else if (resultado.length != 0) {
                     response.status(200);
                     request.session.currentUser = resultado;
                     request.session.puntos = 0;
-                    request.session.foto = request.file.filename;
+                    if(request.file)
+                        request.session.foto = request.file.filename;
                     response.redirect("/perfil");
                 }
             });
@@ -174,7 +180,7 @@ function busqueda(request, response) {
         else {
             var i = _.findIndex(resultado, n => n.id == request.session.currentUser);
             resultado.splice(i, 1);
-            response.render("busqueda", { usuarios: resultado, cad: request.query.busqueda, p: request.session.puntos, imagen : request.session.fotoPerfil });
+            response.render("busqueda", { usuarios: resultado, cad: request.query.busqueda, p: request.session.puntos, imagen: request.session.fotoPerfil });
         }
     });
 }
@@ -214,7 +220,7 @@ function preguntasRandom(request, response) {
         if (err)
             console.log(err.message);
         else {
-            response.render("listadoPreguntas", { preguntas: resultado, p: request.session.puntos , imagen : request.session.fotoPerfil });
+            response.render("listadoPreguntas", { preguntas: resultado, p: request.session.puntos, imagen: request.session.fotoPerfil });
         }
     });
 }
@@ -228,7 +234,7 @@ function viewQuestion(request, response) {
                 if (err)
                     console.log(err.message);
                 else
-                    response.render("responderAmi", { pregunta: descripcion, respuestas: resultado, idPregunta: request.params.id, p: request.session.puntos, imagen : request.session.fotoPerfil});
+                    response.render("responderAmi", { pregunta: descripcion, respuestas: resultado, idPregunta: request.params.id, p: request.session.puntos, imagen: request.session.fotoPerfil });
             });
         }
     });
@@ -269,7 +275,7 @@ function newReply(request, response) {
 }
 
 function showNewQuestion(request, response) {
-    response.render("nuevaPregunta", {p: request.session.puntos, imagen : request.session.fotoPerfil});
+    response.render("nuevaPregunta", { p: request.session.puntos, imagen: request.session.fotoPerfil });
 }
 
 function newQuestion(request, response) {
@@ -326,11 +332,13 @@ function adminQuestions(request, response) {
                                         else {
                                             if (ar[i].miRespuesta == ar[i].respuestaReal) {// las respuesta coinciden por lo tanto he acertao
                                                 lista1[i].x = 1;
+                                                //llamar a modelo que te haga un update de los puntos pasandole un id--> current user
+                                                //y los puntos + 50
                                             } else
                                                 lista[i].x = -1;
                                         }
                                     });
-                                    response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista1, id: request.params.id, p: request.session.puntos, imagen : request.session.fotoPerfil })
+                                    response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista1, id: request.params.id, p: request.session.puntos, imagen: request.session.fotoPerfil })
                                 }
                             });
                         }
@@ -362,7 +370,7 @@ function adivina(request, response) {
                         if (err)
                             console.log(err.message);
                         else
-                            response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre, id: idPregunta, idUser: idUsuario, p: request.session.puntos, imagen : request.session.fotoPerfil });
+                            response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre, id: idPregunta, idUser: idUsuario, p: request.session.puntos, imagen: request.session.fotoPerfil });
                     });
                 }
             });

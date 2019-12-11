@@ -22,18 +22,34 @@
             </div>
             <% }%>
             <div class="datos">
-
+                <% if(usuario.fotoPerfil != null){ %>
                 <img src="/imagen/<%= imagen %>" alt="">
+                <% } %>
                 <% if(usuario.length != 0){ %>
                 <div class="usuario">
                     <div class="Nombre"><%= usuario.nombre %></div>
+                    <% if(usuario.fechaNacimiento != -1){ %>
                     <div> <%= usuario.fechaNacimiento %> años</div>
+                    <% } %>
                     <div>Hombre </div>
                     <div> <%= usuario.puntos %> puntos</div>
                 </div>
                 <% } %>
             </div>
-            <div class="Boton"> <a href="/formulario" class="modificar">Modificar perfil</a></div>
+
+            <div class="Boton"> 
+                <a href="/formulario" class="modificar">Modificar perfil</a>
+            </div>
+
+            <div class="tuperfil">
+                    <h1>Fotos subidas</h1>
+            </div>
+
+            <% fotosSubidas.forEach(f =>{ %>
+                <div class="f">
+                    <img src="/imagen/<%= f %>" alt="" class="subidas">
+                </div>
+            <% }); %>
         </div>
     </body>
 
