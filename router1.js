@@ -6,7 +6,7 @@ const multer = require("multer");
 const multerFactory = multer({dest: path.join(__dirname, "uploads") });
 const { check, validationResult } = require('express-validator');
 const { body } = require('express-validator');
-
+///
 //se encarga de mostrar el formulario de login
 router1.get("/login", controlador.log);
 //Muestra el formulario de Nuevo usuario y el de modificar Perfil

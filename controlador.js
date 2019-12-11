@@ -24,7 +24,7 @@ function amigos(request, response) {
                 else {
                     console.log(amistades);
                     console.log(resultado);
-                    response.render("amigos", { usuarios: resultado, amigos: amistades, points: request.session.puntos });
+                    response.render("amigos", { usuarios: resultado, amigos: amistades, p: request.session.puntos, imagen : request.session.fotoPerfil });
                 }
             });
         }
@@ -93,6 +93,7 @@ function check(request, response) {
                 response.status(200);
                 request.session.currentUser = resultado.id;
                 request.session.puntos = resultado.puntos;
+                request.session.fotoPerfil = resultado.fotoPerfil;
                 response.redirect("/perfil/" + resultado.id);
             }
             else {
@@ -173,7 +174,7 @@ function busqueda(request, response) {
         else {
             var i = _.findIndex(resultado, n => n.id == request.session.currentUser);
             resultado.splice(i, 1);
-            response.render("busqueda", { usuarios: resultado, cad: request.query.busqueda, p: request.session.puntos });
+            response.render("busqueda", { usuarios: resultado, cad: request.query.busqueda, p: request.session.puntos, imagen : request.session.fotoPerfil });
         }
     });
 }
@@ -214,7 +215,7 @@ function preguntasRandom(request, response) {
         if (err)
             console.log(err.message);
         else {
-            response.render("listadoPreguntas", { preguntas: resultado, points: request.session.puntos });
+            response.render("listadoPreguntas", { preguntas: resultado, p: request.session.puntos , imagen : request.session.fotoPerfil });
         }
     });
 }
@@ -228,7 +229,7 @@ function viewQuestion(request, response) {
                 if (err)
                     console.log(err.message);
                 else
-                    response.render("responderAmi", { pregunta: descripcion, respuestas: resultado, idPregunta: request.params.id, points: request.session.puntos });
+                    response.render("responderAmi", { pregunta: descripcion, respuestas: resultado, idPregunta: request.params.id, p: request.session.puntos, imagen : request.session.fotoPerfil});
             });
         }
     });
@@ -269,7 +270,7 @@ function newReply(request, response) {
 }
 
 function showNewQuestion(request, response) {
-    response.render("nuevaPregunta");
+    response.render("nuevaPregunta", {p: request.session.puntos, imagen : request.session.fotoPerfil});
 }
 
 function newQuestion(request, response) {
@@ -330,7 +331,7 @@ function adminQuestions(request, response) {
                                                 lista[i].x = -1;
                                         }
                                     });
-                                    response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista1, id: request.params.id, points: request.session.puntos })
+                                    response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista1, id: request.params.id, p: request.session.puntos, imagen : request.session.fotoPerfil })
                                 }
                             });
                         }
@@ -362,7 +363,7 @@ function adivina(request, response) {
                         if (err)
                             console.log(err.message);
                         else
-                            response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre, id: idPregunta, idUser: idUsuario });
+                            response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre, id: idPregunta, idUser: idUsuario, p: request.session.puntos, imagen : request.session.fotoPerfil });
                     });
                 }
             });
