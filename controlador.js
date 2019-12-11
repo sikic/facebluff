@@ -120,9 +120,11 @@ function e404(request, response, next) {
     });
 }
 
+function isEmpty(value){
+    return values.length == 0;
+}
 function formulario_post(request, response) {
-
-    const errors = validationResult(request).array();
+    const errors = [];
     var x = true;
     if (request.session.currentUser === undefined || request.session.currentUser == -1)
         x = false;
