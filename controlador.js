@@ -51,10 +51,10 @@ function perfil(request, response) {
         if (err)
             console.log(err.message);
         else {
-            var f =[];
+            var f = [];
             f.push("5f83968a124d27c82c0c16d6ee84c8cd");
             f.push("6cfe5518a8e8e76f1d01216fc76511ea");
-            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil ,fotosSubidas: f});
+            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil, fotosSubidas: f });
         }
 
     });
@@ -67,10 +67,10 @@ function perfilLogueado(request, response) {
             console.log(err.message);
         else {
             request.session.fotoPerfil = resultado.fotoPerfil;
-            var f =[];
+            var f = [];
             f.push("5f83968a124d27c82c0c16d6ee84c8cd");
             f.push("6cfe5518a8e8e76f1d01216fc76511ea");
-            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil,fotosSubidas: f});
+            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil, fotosSubidas: f });
         }
 
     });
@@ -120,11 +120,29 @@ function e404(request, response, next) {
     });
 }
 
-function isEmpty(value){
+function isEmpty(value) {
     return values.length == 0;
+}
+
+function min(value, size) {
+    return value.length < size;
 }
 function formulario_post(request, response) {
     const errors = [];
+    if (isEmpty(request.body.email))
+        errors.add("El email no puede estar vacio");
+
+    if (isEmpty(request.body.nombre))
+        errors.add("El nombre no puede estar vacio");
+
+    if(isEmpty(request.body.nombre))
+        errors.add("El nombre no puede estar vacio");
+        
+    if (min(request.body.contraseña, 4))
+        errors.add("La contraseña debe tener minimo 4 carácteres");
+
+
+
     var x = true;
     if (request.session.currentUser === undefined || request.session.currentUser == -1)
         x = false;
@@ -151,7 +169,7 @@ function formulario_post(request, response) {
                     response.status(200);
                     request.session.currentUser = resultado;
                     request.session.puntos = 0;
-                    if(request.file)
+                    if (request.file)
                         request.session.foto = request.file.filename;
                     response.redirect("/perfil");
                 }
@@ -320,7 +338,7 @@ function adminQuestions(request, response) {
                                 else {
                                     var lista1 = lista.filter(onlyUnique);
                                     var i = _.findIndex(lista1, n => n.id == request.session.currentUser);
-                                    if(i != -1)
+                                    if (i != -1)
                                         lista1.splice(i, 1);
                                     lista1.forEach((elm, i) => {
                                         var encontrado = ar.some(n => {
