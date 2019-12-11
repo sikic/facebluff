@@ -35,6 +35,9 @@
             <% if(id == usuario.id){ %>
             <div class="Boton"> <a href="/formulario" class="modificar">Modificar perfil</a></div>
             <% } %>
+            <% if(usuario.puntos >= 50){ %>
+                <div class="Boton"> <a href="/formulario" class="modificar">SubirFoto</a></div>
+                <% } %>
         </div>
     </body>
 

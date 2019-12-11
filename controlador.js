@@ -328,6 +328,14 @@ function adminQuestions(request, response) {
                                         else {
                                             if (ar[i].miRespuesta == ar[i].respuestaReal) {// las respuesta coinciden por lo tanto he acertao
                                                 lista1[i].x = 1;
+                                                mod.updatePoints(request.session.currentUser,request.session.puntos,function(err ,res){
+                                                    if(err)
+                                                    console.log(err.message);
+                                                    else{
+                                                    let p = request.session.puntos;
+                                                    request.session.puntos = p +50;
+                                                    }
+                                                });
                                             } else
                                                 lista[i].x = -1;
                                         }
