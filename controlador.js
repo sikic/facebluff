@@ -5,18 +5,18 @@ const mysql = require("mysql");
 const config = require("./config");
 const pool = mysql.createPool(config.mysqlConfig);
 //creacion de obj para validacion de formularios
-const expressValidator = require("express-validator");
+const { validationResult } = require("express-validator");
 const mod = new modelo(pool);
+let _ = require("underscore");
 
 function login(request, response) {
-    response.render("login", { message: null });
+    response.render("login", { message: null, points: request.session.puntos });
 }
-
 function amigos(request, response) {
 
     mod.getSolicitudes(request.session.currentUser, function (err, resultado) {
         if (err)
-            console.log(err.message);
+            next();
         else {
             mod.getFriends(request.session.currentUser, function (err, amistades) {
                 if (err)
@@ -24,7 +24,7 @@ function amigos(request, response) {
                 else {
                     console.log(amistades);
                     console.log(resultado);
-                    response.render("amigos", { usuarios: resultado, amigos: amistades });
+                    response.render("amigos", { usuarios: resultado, amigos: amistades, p: request.session.puntos, imagen: request.session.fotoPerfil });
                 }
             });
         }
@@ -32,8 +32,9 @@ function amigos(request, response) {
 }
 function mostrarFormulario(request, response) {
     var usuarioLog = true;
+    var aux = [];
     if (request.session.currentUser === undefined || request.session.currentUser == -1) usuarioLog = false;
-    response.render("formulario", { usuarioLogeado: usuarioLog });
+    response.render("formulario", { usuarioLogeado: usuarioLog, p: request.session.puntos, errores: aux, imagen: request.session.fotoPerfil });
 }
 
 function comprobar(request, response, next) {
@@ -50,25 +51,36 @@ function perfil(request, response) {
         if (err)
             console.log(err.message);
         else {
-            console.log(resultado);
-            response.render("perfil", { usuario: resultado });
+            mod.getFotosUsuario(request.params.id, function (err, res) {
+                if (err)
+                    console.log(err.message);
+                else
+                    response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil, id: request.params.id, imgLogueado: request.session.fotoPerfil, fotosSubidas: res });
+            });
         }
 
     });
 
 }
-function perfilLogueado(request,response){
-    
-        mod.getDataUser(request.session.currentUser,function(err,resultado){
-            if(err)
-                console.log(err.message);
-            else{
-                console.log(resultado);
-                response.render("perfil",{usuario : resultado} );
-            }
-    
-        });
-    
+function perfilLogueado(request, response) {
+
+    mod.getDataUser(request.session.currentUser, function (err, resultado) {
+        if (err)
+            console.log(err.message);
+        else {
+            request.session.fotoPerfil = resultado.fotoPerfil;
+            resultado.id = request.session.currentUser;
+            mod.getFotosUsuario(request.session.currentUser, function (err, res) {
+                if (err)
+                    console.log(err.message);
+                else
+                    response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil, id: request.session.currentUser, imgLogueado: request.session.fotoPerfil, fotosSubidas: res });
+            });
+
+        }
+
+    });
+
 }
 
 function salir(request, response) {
@@ -77,6 +89,7 @@ function salir(request, response) {
 }
 
 function check(request, response) {
+
     let usuario = {
         email: request.body.email,
         password: request.body.contraseña
@@ -90,6 +103,8 @@ function check(request, response) {
             if (resultado != null) {
                 response.status(200);
                 request.session.currentUser = resultado.id;
+                request.session.puntos = resultado.puntos;
+                request.session.fotoPerfil = resultado.fotoPerfil;
                 response.redirect("/perfil/" + resultado.id);
             }
             else {
@@ -111,52 +126,91 @@ function e404(request, response, next) {
     });
 }
 
+function isEmpty(value) {
+    return values.length == 0;
+}
+
+function min(value, size) {
+    return value.length < size;
+}
 function formulario_post(request, response) {
+    const errors = [];
+    if (isEmpty(request.body.email))
+        errors.add("El email no puede estar vacio");
 
-    // request.checkBody("email", "Falta rellenar el email").notEmpty();
+    if (isEmpty(request.body.nombre))
+        errors.add("El nombre no puede estar vacio");
 
-    let usuarioNuevo = {
-        nombre: request.body.nombre,
-        email: request.body.email,
-        contraseña: request.body.contraseña,
-        fechaNacimiento: request.body.fechaNacimiento,
-        sexo: request.body.s,
-        fotoPerfil: request.body.fotoPerfil,
-        puntos: 0
+    if(isEmpty(request.body.nombre))
+        errors.add("El nombre no puede estar vacio");
+        
+    if (min(request.body.contraseña, 4))
+        errors.add("La contraseña debe tener minimo 4 carácteres");
+
+
+
+    var x = true;
+    if (request.session.currentUser === undefined || request.session.currentUser == -1)
+        x = false;
+    if (errors.length == 0) {//no hay ningun error por lo tanto se puede proseguir
+
+        let usuarioNuevo = {
+            nombre: request.body.nombre,
+            email: request.body.email,
+            contraseña: request.body.contraseña,
+            fechaNacimiento: request.body.fechaNacimiento,
+            sexo: request.body.s,
+            puntos: 0
+        }
+        if (request.file) {
+            usuarioNuevo.fotoPerfil = request.file.filename;
+            request.session.foto = request.file.filename;
+        }
+
+        if (!x) {
+            mod.insertUser(usuarioNuevo, function (err, resultado) {
+                if (err)
+                    console.log(err.message);
+                else if (resultado.length != 0) {
+                    response.status(200);
+                    request.session.currentUser = resultado;
+                    request.session.puntos = 0;
+                    if (request.file)
+                        request.session.foto = request.file.filename;
+                    response.redirect("/perfil");
+                }
+            });
+        }
+        else {
+            //
+            usuarioNuevo.id = request.session.currentUser;
+            mod.modificarUser(usuarioNuevo, function (err, resultado) {
+                if (err)
+                    console.log(err.message);
+                else {
+                    response.status(200);
+                    response.redirect("/perfil");
+                }
+            });
+        }
+    } else { //hay errores y hay que renderizar la pag de formulario
+        let puntos = 0;
+        let imag = 0;
+        response.render("formulario", { usuarioLogeado: x, p: request.session.puntos, errores: errors, imagen: resultado.fotoPerfil });
     }
 
-    if (request.session.currentUser === undefined || request.session.currentUser == -1) {
-        mod.insertUser(usuarioNuevo, function (err, resultado) {
-            if (err)
-                console.log(err.message);
-            else {
-                response.status(200);
-                request.session.currentUser = resultado;
-                response.redirect("/perfil");
-            }
-        });
-    }
-    else {
-        //
-        usuarioNuevo.id = request.session.currentUser;
-        mod.modificarUser(usuarioNuevo, function (err, resultado) {
-            if (err)
-                console.log(err.message);
-            else {
-                response.status(200);
-                response.redirect("/perfil");
-            }
-        });
-    }
 }
 
 function busqueda(request, response) {
-    console.log(request.query.busqueda);
     mod.search(request.query.busqueda, function (err, resultado) {
         if (err)
             console.log(err.message);
         else {
-            response.render("busqueda", { usuarios: resultado, cad: request.query.busqueda });
+            var i = _.findIndex(resultado, n => n.id == request.session.currentUser);
+            if( i != -1){
+            resultado.splice(i, 1);
+            }
+            response.render("busqueda", { usuarios: resultado, cad: request.query.busqueda, p: request.session.puntos, imagen: request.session.fotoPerfil });
         }
     });
 }
@@ -186,7 +240,6 @@ function rechazarAmistad(request, response) {
         if (err)
             console.log(err.message);
         else {
-            console.log("rechazada");
             response.redirect("/amigos");
         }
     });
@@ -197,7 +250,7 @@ function preguntasRandom(request, response) {
         if (err)
             console.log(err.message);
         else {
-            response.render("listadoPreguntas", { preguntas: resultado });
+            response.render("listadoPreguntas", { preguntas: resultado, p: request.session.puntos, imagen: request.session.fotoPerfil });
         }
     });
 }
@@ -211,7 +264,7 @@ function viewQuestion(request, response) {
                 if (err)
                     console.log(err.message);
                 else
-                    response.render("responderAmi", { pregunta: descripcion, respuestas: resultado, idPregunta: request.params.id });
+                    response.render("responderAmi", { pregunta: descripcion, respuestas: resultado, idPregunta: request.params.id, p: request.session.puntos, imagen: request.session.fotoPerfil });
             });
         }
     });
@@ -252,7 +305,7 @@ function newReply(request, response) {
 }
 
 function showNewQuestion(request, response) {
-    response.render("nuevaPregunta");
+    response.render("nuevaPregunta", { p: request.session.puntos, imagen: request.session.fotoPerfil });
 }
 
 function newQuestion(request, response) {
@@ -293,7 +346,11 @@ function adminQuestions(request, response) {
                                 if (err)
                                     console.log(err.message);
                                 else {
-                                    lista.forEach((elm, i) => {
+                                    var lista1 = lista.filter(onlyUnique);
+                                    var i = _.findIndex(lista1, n => n.id == request.session.currentUser);
+                                    if (i != -1)
+                                        lista1.splice(i, 1);
+                                    lista1.forEach((elm, i) => {
                                         var encontrado = ar.some(n => {
                                             if (n.idUsuario2 == elm.id) {
                                                 return true;
@@ -302,15 +359,23 @@ function adminQuestions(request, response) {
 
                                         });
                                         if (!encontrado) //no lo ha encontrado por lo tanto aun esta sin intentar adivinar
-                                            lista[i].x = 0;
+                                            lista1[i].x = 0;
                                         else {
                                             if (ar[i].miRespuesta == ar[i].respuestaReal) {// las respuesta coinciden por lo tanto he acertao
-                                                lista[i].x = 1;
+                                                lista1[i].x = 1;
+                                                let v = request.session.puntos + 50;
+                                                mod.updatePoints(request.session.currentUser, v, function (err, res) {
+                                                    if (err)
+                                                        console.log(err.message);
+                                                    else {
+                                                        request.session.puntos = v;
+                                                    }
+                                                });
                                             } else
-                                                lista[i].x = -1;
+                                                lista1[i].x = -1;
                                         }
                                     });
-                                    response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista, id: request.params.id })
+                                    response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista1, id: request.params.id, p: request.session.puntos, imagen: request.session.fotoPerfil })
                                 }
                             });
                         }
@@ -319,6 +384,9 @@ function adminQuestions(request, response) {
             });
         }
     });
+}
+function onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
 }
 
 function adivina(request, response) {
@@ -339,7 +407,7 @@ function adivina(request, response) {
                         if (err)
                             console.log(err.message);
                         else
-                            response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre,id:idPregunta });
+                            response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre, id: idPregunta, idUser: idUsuario, p: request.session.puntos, imagen: request.session.fotoPerfil });
                     });
                 }
             });
@@ -348,7 +416,11 @@ function adivina(request, response) {
 }
 
 function anadircuaternaria(request, response) {
-    request.body.radio;
+    var frase = request.query.pregunta.split("/");
+    var idUsuario = frase[2];
+    var idPregunta = request.params.id;
+    var idRespuesta = frase[1];
+
     //añadimos que el usuario actual a respondido sobre otro usuario    
     mod.addReplytoCuaternaria(request.session.currentUser, idUsuario, idPregunta, idRespuesta, function (err, resultado) {
         if (err) {
@@ -359,7 +431,29 @@ function anadircuaternaria(request, response) {
         }
     });
 }
+function mostrarsubir(request, response) {
+    response.render("subirFoto", { p: request.session.puntos, imagen: request.session.fotoPerfil });
+}
+function subirfoto(request, response) {
+    if (request.file) {
+        var foto = request.file.filename;
+        mod.addFotoUsuario(request.session.currentUser, foto, function (err) {
+            if (err)
+                console.log(err.message);
+            else{
+                let s = request.session.puntos - 100;
+                mod.updatePoints(request.session.currentUser,s,function(err,res){
+                    if(err)
+                    console.log(err.message);
+                    else
+                    request.session.puntos = s;
+                });
+                response.redirect("/perfil");
+            }
+        });
     }
+}
+
 module.exports = {
     log: login,
     log_post: check,
@@ -376,14 +470,16 @@ module.exports = {
     mostrarform: mostrarFormulario,
     verPregunta: viewQuestion,
     addReply: newReply,
-    newQuestion : showNewQuestion,
-    procesarNewQuestion:newQuestion,
-    mostrarPerfil : perfil,
-    mostrarPerfilLogueado : perfilLogueado
+    newQuestion: showNewQuestion,
+    procesarNewQuestion: newQuestion,
+    mostrarPerfil: perfil,
+    mostrarPerfilLogueado: perfilLogueado,
     adivinar: adivina,
     newQuestion: showNewQuestion,
     procesarNewQuestion: newQuestion,
     mostrarPerfil: perfil,
     adminPreguntas: adminQuestions,
-    addCuaternaria: anadircuaternaria
+    addCuaternaria: anadircuaternaria,
+    mostrarSubir: mostrarsubir,
+    subirFoto: subirfoto
 }

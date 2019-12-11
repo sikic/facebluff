@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="shortcut icon" href="/img/uchiha.png" type="image/x-icon">
     <link rel="stylesheet" href="/css/vistaPreguntas.css">
     <title>Vista-preguntas</title>
 </head>
@@ -13,7 +14,7 @@
 
 <body>
 
-    <%- include("header",{points : 100}) %>
+    <%- include("header",{points :  p , imagen :  imagen}) %>
 
     <div class="titulo centro">
         <h1> <%= pregunta %></h1>
@@ -21,7 +22,7 @@
 
     <div class="principal">
         <div class="frases">
-        <% if(contestado == false){ %>
+            <% if(contestado == false){ %>
             <div>
                 <p>No has contestado a esta pregunta.</p>
             </div>
@@ -42,31 +43,30 @@
         <div class="usuario">
             <% if(amigos.length ==  0){ %>
             <div>
-                <h2>No tienes amigos que hayan respondido a esta pregunta <i class="fas fa-poo"></i> <i
-                        class="fas fa-heart-broken"></i></h2>
+                <h2>No tienes amigos que hayan respondido a esta pregunta<i class="fas fa-heart-broken"></i></h2>
             </div>
             <% }else{ %>
-                <% amigos.forEach(e=>{ %>
-                <div id="usuario1">
-                    <img src="../img/<%= e.fotoPerfil %>" alt="" class="fotoPerfil">
-                    <span> <%= e.nombre %> </span>
-                    <% if(e.x == 0){ %>
-                    <div class="botones tam">
-                        <a href="/adivinarRespuesta/<%= e.id %>*<%= id %>">Adivinar</a>
-                    </div>
-                    <% }else if(e.x == 1){ %>
-                    <div class="acertar tam">
-                        <h1>Has acertado</h1>
-                    </div>
-
-                    <% }else{ %>
-                    <div class="fallar tam">
-                        <h1>Has fallado</h1>
-                    </div>
-                    <% } %>
+            <% amigos.forEach(e=>{ %>
+            <div id="usuario1">
+                <img src="/imagen/<%= e.fotoPerfil %>" alt="" class="fotoPerfil">
+                <span> <%= e.nombre %> </span>
+                <% if(e.x == 0){ %>
+                <div class="botones tam">
+                    <a href="/adivinarRespuesta/<%= e.id %>*<%= id %>">Adivinar</a>
+                </div>
+                <% }else if(e.x == 1){ %>
+                <div class="acertar tam">
+                    <h1>Has acertado</h1>
                 </div>
 
-                <% }); %>
+                <% }else if (e.x == -1){ %>
+                <div class="fallar tam">
+                    <h1>Has fallado</h1>
+                </div>
+                <% } %>
+            </div>
+
+            <% }); %>
             <% } %>
         </div>
 

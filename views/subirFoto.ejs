@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/nuevaPregunta.css">
+    <link rel="shortcut icon" href="/img/uchiha.png" type="image/x-icon">
+    <title>Subir-foto</title>
+</head>
+<body>
+         <%- include("header",{points :  p , imagen :  imagen}) %> 
+
+        <div class="principal">
+            <div class="formulario">
+                <form action="/ProcesarSubirFoto" method="POST"  enctype="multipart/form-data">
+                <label for="">
+                    Seleccione una foto:
+                </label>
+        
+                <input type="file" name="foto">
+                <div class="centro">
+                    <input type="submit" value="Guardar">
+                </div>
+                </form>
+            </div>
+        </div>
+</body>
+</html>

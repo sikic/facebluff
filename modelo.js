@@ -1,4 +1,7 @@
 "use strict";
+const moment = require("moment");
+moment.locale('es');
+
 class modelo {
     constructor(pool) {
         this.pool = pool;
@@ -20,8 +23,14 @@ class modelo {
                     else {
                         var rs;
                         result.forEach(element => {
-                            let edad = Date.now() - element.fechaNacimiento.getTime();
-                            let anios = Math.round(edad / (1000 * 60 * 60 * 24) / 31 / 12);
+                            let f = moment(element.fechaNacimiento);
+                            let anios;
+                            if(f.format('YYYY') !== "Invalid date"){
+                                let edad = Date.now() - element.fechaNacimiento.getTime();
+                                anios = Math.round(edad / (1000 * 60 * 60 * 24) / 31 / 12);
+                            }else{
+                                anios = -1;
+                            }
                             let genero;
                             element.sexo == "masculino" ? genero = "Hombre" : genero = "Mujer";
                             rs = {
@@ -192,7 +201,6 @@ class modelo {
                 var sql = "DELETE FROM solicitudes   WHERE solicitudes.idUsuario2 = ?  AND solicitudes.idUsuario1 = ?";
                 var params = [idSolicitado, idSolicitante];
                 connection.query(sql, params, function (err, result) {
-                    connection.release();
                     if (err)
                         callback(err);
                     else {
@@ -350,8 +358,14 @@ class modelo {
                     else {
                         var rs;
                         resultado.forEach(element => {
-                            let edad = Date.now() - element.fechaNacimiento.getTime();
-                            let anios = Math.round(edad / (1000 * 60 * 60 * 24) / 31 / 12);
+                            let anios;
+                            let f = moment(element.fechaNacimiento);
+                            if(f.format('YYYY') !== "Invalid date"){
+                                let edad = Date.now() - element.fechaNacimiento.getTime();
+                                anios = Math.round(edad / (1000 * 60 * 60 * 24) / 31 / 12);
+                            }else{
+                                anios = -1;
+                            }
                             let genero;
                             element.sexo == "masculino" ? genero = "Hombre" : genero = "Mujer";
                             rs = {
@@ -451,8 +465,8 @@ class modelo {
             if (err)
                 callback(err,null);
             else {
-                var sql ="SELECT c.idUsuario2 ,c.idRespuesta miRespuesta,u.idRespuesta respuestaReal FROM usuario_pregunta_respuesta u LEFT JOIN cuaternaria c ON u.idUsuario = c.idUsuario2 AND c.idPregunta = u.idPregunta WHERE c.idPregunta = ? AND c.idUsuario1 = ?";
-                var params = [pregunta,usuario];
+                var sql ="SELECT c.idUsuario2 ,c.idRespuesta miRespuesta,u.idRespuesta respuestaReal FROM usuario_pregunta_respuesta u LEFT JOIN cuaternaria c ON u.idUsuario = c.idUsuario2 AND c.idPregunta = u.idPregunta WHERE c.idUsuario1 = ? AND c.idPregunta = ? AND c.idUsuario2 <> ?";
+                var params = [usuario,pregunta,usuario];
                 connection.query(sql, params, function (err, resultado){
                     connection.release();
                     if (err)
@@ -481,6 +495,60 @@ class modelo {
                         callback(err,null);
                     else
                         callback(null,resultado);
+                });
+            }
+        });
+    }
+
+    updatePoints(idUsuario,puntos,callback){
+        this.pool.getConnection(function(err,connection){
+            if(err)
+            callback(err,null);
+            else{
+                var sql = "UPDATE usuarios SET puntos = ? WHERE id = ?";
+                let ActuPunt = puntos;
+                var params = [ActuPunt,idUsuario];
+                connection.query(sql,params,function(err,resultado){
+                    connection.release();
+                    if(err)
+                    callback(err,null);
+                    else
+                    callback(null,resultado);
+                });
+            }
+        });
+    }
+    getFotosUsuario(idUsuario,callback){
+        this.pool.getConnection(function(err,connection){
+            if(err)
+            callback(err,null);
+            else{
+                var sql = "SELECT foto FROM fotos_subidas WHERE idUsuario = ?";
+                var param = idUsuario;
+                connection.query(sql,param,function(err,resultado){
+                    connection.release();
+                    if(err)
+                    callback(err,null);
+                    else
+                    callback(null,resultado);
+                });
+            }
+        });
+    }
+
+    addFotoUsuario(idUsuario,foto,callback){
+        this.pool.getConnection(function(err,connection){
+            if(err)
+            callback(err);
+            else{
+                var sql = "INSERT INTO fotos_subidas VALUES(?,?)";
+                var param = [idUsuario,foto];
+                connection.query(sql,param,function(err,resultado){
+                    connection.release();
+                    if(err)
+                    callback(err);
+                    else
+                    callback(null);
                 });
             }
         });

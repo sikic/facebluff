@@ -44,7 +44,7 @@ li:hover() {
 }
 
 .datos img {
-    width: 50%;
+    width: 300px;
     border: 2px solid black;
 }
 
@@ -58,6 +58,7 @@ a {
 .Boton {
     display: flex;
     justify-content: center;
+    margin-bottom: 2%;
 }
 
 
@@ -65,8 +66,17 @@ a {
 .usuario {
     font-weight: bold;
     font-size: 2em;
+    margin-left: 3%;
 }
 
 .modificar {
     margin-top: 1em;
+}
+.f{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2%;
+}
+.subidas{
+    width: 300px;
 }

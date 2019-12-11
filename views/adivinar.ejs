@@ -6,13 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="/css/adivinar.css">
+    <link rel="shortcut icon" href="/img/uchiha.png" type="image/x-icon">
     <title>Responderme-Amigo</title>
 </head>
 
 
 <body>
 
-    <%- include("header",{points : 100}) %>
+    <%- include("header",{points :  p , imagen :  imagen}) %>
 
 
     <div class="titulo centro">
@@ -30,7 +31,7 @@
             <% respuestas.forEach(e=>{ %>
             <div class="respuestas">
                 <label>
-                    <input type="radio" name="radio" value="<%= e.descripcion %>/ <%= e.id %> ">
+                    <input type="radio" name="pregunta" value="<%= e.descripcion %>/<%= e.id %>/<%= idUser %> ">
                     <%= e.descripcion %>
                 </label>
             </div>
