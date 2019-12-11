@@ -126,9 +126,29 @@ function e404(request, response, next) {
     });
 }
 
-function formulario_post(request, response) {
+function isEmpty(value) {
+    return values.length == 0;
+}
 
-    const errors = validationResult(request).array();
+function min(value, size) {
+    return value.length < size;
+}
+function formulario_post(request, response) {
+    const errors = [];
+    if (isEmpty(request.body.email))
+        errors.add("El email no puede estar vacio");
+
+    if (isEmpty(request.body.nombre))
+        errors.add("El nombre no puede estar vacio");
+
+    if(isEmpty(request.body.nombre))
+        errors.add("El nombre no puede estar vacio");
+        
+    if (min(request.body.contraseña, 4))
+        errors.add("La contraseña debe tener minimo 4 carácteres");
+
+
+
     var x = true;
     if (request.session.currentUser === undefined || request.session.currentUser == -1)
         x = false;
