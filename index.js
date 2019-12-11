@@ -42,7 +42,7 @@ app.use(express.static(ficherosEstaticos));
 //Usamos el router1(Apartado 1 de la practica)
 app.use(miRouter1);
 //error505
-app.use(error500);
+//app.use(error500);
 //vista de perfil
 app.use(controlador.estaLogeado);
 
@@ -55,6 +55,10 @@ app.get("/procesarNewQuestion", controlador.procesarNewQuestion);
 app.get("/administrarPreguntas/:id", controlador.adminPreguntas);
 app.get("/adivinarRespuesta/:id", controlador.adivinar);
 app.get("/newReplyToUser/:id", controlador.addCuaternaria);
+
+
+app.get("/procesarSubir", controlador.mostrarSubir);
+
 
 
 function error500(error, request, response, next) {
