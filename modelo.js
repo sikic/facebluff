@@ -499,5 +499,24 @@ class modelo {
             }
         });
     }
+
+    updatePoints(idUsuario,puntos,callback){
+        this.pool.getConnection(function(err,connection){
+            if(err)
+            callback(err,null);
+            else{
+                var sql = "UPDATE usuarios SET puntos = ? WHERE id = ?";
+                let ActuPunt = puntos + 50;
+                var params = [ActuPunt,idUsuario];
+                connection.query(sql,params,function(err,resultado){
+                    connection.release();
+                    if(err)
+                    callback(err,null);
+                    else
+                    callback(null,resultado);
+                });
+            }
+        });
+    }
 }
 module.exports = modelo;

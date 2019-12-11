@@ -34,7 +34,7 @@ function mostrarFormulario(request, response) {
     var usuarioLog = true;
     var aux = [];
     if (request.session.currentUser === undefined || request.session.currentUser == -1) usuarioLog = false;
-    response.render("formulario", { usuarioLogeado: usuarioLog, points: request.session.puntos, errores: aux });
+    response.render("formulario", { usuarioLogeado: usuarioLog, p: request.session.puntos, errores: aux, imagen : request.session.fotoPerfil});
 }
 
 function comprobar(request, response, next) {
@@ -55,6 +55,8 @@ function perfil(request, response) {
             f.push("5f83968a124d27c82c0c16d6ee84c8cd");
             f.push("6cfe5518a8e8e76f1d01216fc76511ea");
             response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil ,fotosSubidas: f});
+            resultado.id = request.params.id;
+            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil, id : request.session.currentUser, imgLogueado :request.session.fotoPerfil });
         }
 
     });
@@ -66,6 +68,9 @@ function perfilLogueado(request, response) {
         if (err)
             console.log(err.message);
         else {
+            request.session.fotoPerfil = resultado.fotoPerfil;
+            resultado.id =request.session.currentUser;
+            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil , id : request.session.currentUser,imgLogueado: request.session.fotoPerfil});
             request.session.fotoPerfil = resultado.fotoPerfil;
             var f =[];
             f.push("5f83968a124d27c82c0c16d6ee84c8cd");
@@ -168,9 +173,11 @@ function formulario_post(request, response) {
             });
         }
     } else { //hay errores y hay que renderizar la pag de formulario
-        response.render("formulario", { usuarioLogeado: x, points: request.session.puntos, errores: errors });
-
+        let puntos = 0;
+        let imag = 0;
+        response.render("formulario", { usuarioLogeado: x, p: request.session.puntos, errores: errors , imagen: resultado.fotoPerfil });
     }
+
 }
 
 function busqueda(request, response) {
@@ -333,8 +340,14 @@ function adminQuestions(request, response) {
                                         else {
                                             if (ar[i].miRespuesta == ar[i].respuestaReal) {// las respuesta coinciden por lo tanto he acertao
                                                 lista1[i].x = 1;
-                                                //llamar a modelo que te haga un update de los puntos pasandole un id--> current user
-                                                //y los puntos + 50
+                                                mod.updatePoints(request.session.currentUser,request.session.puntos,function(err ,res){
+                                                    if(err)
+                                                    console.log(err.message);
+                                                    else{
+                                                    let p = request.session.puntos;
+                                                    request.session.puntos = p +50;
+                                                    }
+                                                });
                                             } else
                                                 lista[i].x = -1;
                                         }
