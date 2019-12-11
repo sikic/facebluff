@@ -141,8 +141,6 @@ function formulario_post(request, response) {
     if (min(request.body.contraseña, 4))
         errors.add("La contraseña debe tener minimo 4 carácteres");
 
-
-
     var x = true;
     if (request.session.currentUser === undefined || request.session.currentUser == -1)
         x = false;
@@ -356,7 +354,7 @@ function adminQuestions(request, response) {
                                                 //llamar a modelo que te haga un update de los puntos pasandole un id--> current user
                                                 //y los puntos + 50
                                             } else
-                                                lista[i].x = -1;
+                                                lista1[i].x = -1;
                                         }
                                     });
                                     response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista1, id: request.params.id, p: request.session.puntos, imagen: request.session.fotoPerfil })
