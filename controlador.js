@@ -34,7 +34,7 @@ function mostrarFormulario(request, response) {
     var usuarioLog = true;
     var aux = [];
     if (request.session.currentUser === undefined || request.session.currentUser == -1) usuarioLog = false;
-    response.render("formulario", { usuarioLogeado: usuarioLog, p: request.session.puntos, errores: aux, imagen : request.session.fotoPerfil});
+    response.render("formulario", { usuarioLogeado: usuarioLog, p: request.session.puntos, errores: aux, imagen: request.session.fotoPerfil });
 }
 
 function comprobar(request, response, next) {
@@ -51,12 +51,12 @@ function perfil(request, response) {
         if (err)
             console.log(err.message);
         else {
-            var f =[];
-            f.push("5f83968a124d27c82c0c16d6ee84c8cd");
-            f.push("6cfe5518a8e8e76f1d01216fc76511ea");
-            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil ,fotosSubidas: f});
-            resultado.id = request.params.id;
-            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil, id : request.session.currentUser, imgLogueado :request.session.fotoPerfil });
+            mod.getFotosUsuario(request.params.id, function (err, res) {
+                if (err)
+                    console.log(err.message);
+                else
+                    response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil, id: request.params.id, imgLogueado: request.session.fotoPerfil, fotosSubidas: res });
+            });
         }
 
     });
@@ -69,13 +69,14 @@ function perfilLogueado(request, response) {
             console.log(err.message);
         else {
             request.session.fotoPerfil = resultado.fotoPerfil;
-            resultado.id =request.session.currentUser;
-            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil , id : request.session.currentUser,imgLogueado: request.session.fotoPerfil});
-            request.session.fotoPerfil = resultado.fotoPerfil;
-            var f =[];
-            f.push("5f83968a124d27c82c0c16d6ee84c8cd");
-            f.push("6cfe5518a8e8e76f1d01216fc76511ea");
-            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil,fotosSubidas: f});
+            resultado.id = request.session.currentUser;
+            mod.getFotosUsuario(request.session.currentUser, function (err, res) {
+                if (err)
+                    console.log(err.message);
+                else
+                    response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil, id: request.session.currentUser, imgLogueado: request.session.fotoPerfil, fotosSubidas: res });
+            });
+
         }
 
     });
@@ -154,7 +155,7 @@ function formulario_post(request, response) {
                     response.status(200);
                     request.session.currentUser = resultado;
                     request.session.puntos = 0;
-                    if(request.file)
+                    if (request.file)
                         request.session.foto = request.file.filename;
                     response.redirect("/perfil");
                 }
@@ -175,7 +176,7 @@ function formulario_post(request, response) {
     } else { //hay errores y hay que renderizar la pag de formulario
         let puntos = 0;
         let imag = 0;
-        response.render("formulario", { usuarioLogeado: x, p: request.session.puntos, errores: errors , imagen: resultado.fotoPerfil });
+        response.render("formulario", { usuarioLogeado: x, p: request.session.puntos, errores: errors, imagen: resultado.fotoPerfil });
     }
 
 }
@@ -186,7 +187,9 @@ function busqueda(request, response) {
             console.log(err.message);
         else {
             var i = _.findIndex(resultado, n => n.id == request.session.currentUser);
+            if( i != -1){
             resultado.splice(i, 1);
+            }
             response.render("busqueda", { usuarios: resultado, cad: request.query.busqueda, p: request.session.puntos, imagen: request.session.fotoPerfil });
         }
     });
@@ -325,7 +328,7 @@ function adminQuestions(request, response) {
                                 else {
                                     var lista1 = lista.filter(onlyUnique);
                                     var i = _.findIndex(lista1, n => n.id == request.session.currentUser);
-                                    if(i != -1)
+                                    if (i != -1)
                                         lista1.splice(i, 1);
                                     lista1.forEach((elm, i) => {
                                         var encontrado = ar.some(n => {
@@ -340,12 +343,12 @@ function adminQuestions(request, response) {
                                         else {
                                             if (ar[i].miRespuesta == ar[i].respuestaReal) {// las respuesta coinciden por lo tanto he acertao
                                                 lista1[i].x = 1;
-                                                mod.updatePoints(request.session.currentUser,request.session.puntos,function(err ,res){
-                                                    if(err)
-                                                    console.log(err.message);
-                                                    else{
-                                                    let p = request.session.puntos;
-                                                    request.session.puntos = p +50;
+                                                let v = request.session.puntos + 50;
+                                                mod.updatePoints(request.session.currentUser, v, function (err, res) {
+                                                    if (err)
+                                                        console.log(err.message);
+                                                    else {
+                                                        request.session.puntos = v;
                                                     }
                                                 });
                                             } else
@@ -408,6 +411,28 @@ function anadircuaternaria(request, response) {
         }
     });
 }
+function mostrarsubir(request, response) {
+    response.render("subirFoto", { p: request.session.puntos, imagen: request.session.fotoPerfil });
+}
+function subirfoto(request, response) {
+    if (request.file) {
+        var foto = request.file.filename;
+        mod.addFotoUsuario(request.session.currentUser, foto, function (err) {
+            if (err)
+                console.log(err.message);
+            else{
+                let s = request.session.puntos - 100;
+                mod.updatePoints(request.session.currentUser,s,function(err,res){
+                    if(err)
+                    console.log(err.message);
+                    else
+                    request.session.puntos = s;
+                });
+                response.redirect("/perfil");
+            }
+        });
+    }
+}
 
 module.exports = {
     log: login,
@@ -434,5 +459,7 @@ module.exports = {
     procesarNewQuestion: newQuestion,
     mostrarPerfil: perfil,
     adminPreguntas: adminQuestions,
-    addCuaternaria: anadircuaternaria
+    addCuaternaria: anadircuaternaria,
+    mostrarSubir: mostrarsubir,
+    subirFoto: subirfoto
 }

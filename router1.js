@@ -21,6 +21,11 @@ router1.post("/procesar_post",[
     //check("contraseña","La contraseña debe contener un minimo de 4 caracteres").isLength({ min: 4 }),
     check("contraseña","La contraseña no puede estar vacia").isEmpty()
 ],multerFactory.single("fotoPerfil"),controlador.formulario);
+
+router1.post("/ProcesarSubirFoto",[
+    check("foto","Debe subir alguna foto").isEmpty(),
+],multerFactory.single("foto"),controlador.subirFoto);
+
 //Funcion que nos muestra el perfil de los amigos etc...
 router1.get("/perfil/:id",controlador.mostrarPerfil);
 //Funcion que nos muestra nuestro propio perfil

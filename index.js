@@ -57,6 +57,10 @@ app.get("/adivinarRespuesta/:id", controlador.adivinar);
 app.get("/newReplyToUser/:id", controlador.addCuaternaria);
 
 
+app.get("/procesarSubir", controlador.mostrarSubir);
+
+
+
 function error500(error, request, response, next) {
     // Código 500: Internal server error
     response.status(500);

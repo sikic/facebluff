@@ -506,7 +506,7 @@ class modelo {
             callback(err,null);
             else{
                 var sql = "UPDATE usuarios SET puntos = ? WHERE id = ?";
-                let ActuPunt = puntos + 50;
+                let ActuPunt = puntos;
                 var params = [ActuPunt,idUsuario];
                 connection.query(sql,params,function(err,resultado){
                     connection.release();
@@ -514,6 +514,41 @@ class modelo {
                     callback(err,null);
                     else
                     callback(null,resultado);
+                });
+            }
+        });
+    }
+    getFotosUsuario(idUsuario,callback){
+        this.pool.getConnection(function(err,connection){
+            if(err)
+            callback(err,null);
+            else{
+                var sql = "SELECT foto FROM fotos_subidas WHERE idUsuario = ?";
+                var param = idUsuario;
+                connection.query(sql,param,function(err,resultado){
+                    connection.release();
+                    if(err)
+                    callback(err,null);
+                    else
+                    callback(null,resultado);
+                });
+            }
+        });
+    }
+
+    addFotoUsuario(idUsuario,foto,callback){
+        this.pool.getConnection(function(err,connection){
+            if(err)
+            callback(err);
+            else{
+                var sql = "INSERT INTO fotos_subidas VALUES(?,?)";
+                var param = [idUsuario,foto];
+                connection.query(sql,param,function(err,resultado){
+                    connection.release();
+                    if(err)
+                    callback(err);
+                    else
+                    callback(null);
                 });
             }
         });
