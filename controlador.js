@@ -64,7 +64,6 @@ function perfilLogueado(request, response) {
         if (err)
             console.log(err.message);
         else {
-            console.log(request.session.foto);
             response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil });
         }
 
@@ -167,7 +166,6 @@ function formulario_post(request, response) {
 }
 
 function busqueda(request, response) {
-    console.log(request.query.busqueda);
     mod.search(request.query.busqueda, function (err, resultado) {
         if (err)
             console.log(err.message);
@@ -204,7 +202,6 @@ function rechazarAmistad(request, response) {
         if (err)
             console.log(err.message);
         else {
-            console.log("rechazada");
             response.redirect("/amigos");
         }
     });
