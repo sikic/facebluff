@@ -45,6 +45,7 @@ header {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    align-items: center;
 }
 
 a {
@@ -90,5 +91,9 @@ span{
 
 .puntacos img{
     width: 60px;
-    border-radius: 45px;
+    border-radius: 150px;
+}
+
+.p{
+    margin-left: 9%;
 }

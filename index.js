@@ -41,14 +41,10 @@ app.use(express.static(ficherosEstaticos));
 
 //Usamos el router1(Apartado 1 de la practica)
 app.use(miRouter1);
+//error505
+app.use(error500);
 //vista de perfil
 app.use(controlador.estaLogeado);
-
-
-//validador de datos
-// app.use(expressValidator());
-//vista amigos
-
 
 
 app.get("/preguntas", controlador.preguntasAleatorias);
@@ -61,22 +57,11 @@ app.get("/adivinarRespuesta/:id", controlador.adivinar);
 app.get("/newReplyToUser/:id", controlador.addCuaternaria);
 
 
-
-
-
-
-
-//-----
-
 function error500(error, request, response, next) {
     // Código 500: Internal server error
     response.status(500);
-    response.render("error500", { mensaje: error.message, pila: error.stack });
+    response.render("error500");
 }
-
-//para el error 404
-// app.use(controlador.error404);
-//app.use(error500);
 
 app.listen(3000, function (err) {
     if (err) {

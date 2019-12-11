@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="shortcut icon" href="/img/uchiha.png" type="image/x-icon">
     <link rel="stylesheet" href="/css/perfil.css">
     <title>Perfil</title>
 </head>
@@ -21,12 +22,15 @@
             </div>
             <% }%>
             <div class="datos">
-
+                <% if(usuario.fotoPerfil != null){ %>
                 <img src="/imagen/<%= imagen %>" alt="">
+                <% } %>
                 <% if(usuario.length != 0){ %>
                 <div class="usuario">
                     <div class="Nombre"><%= usuario.nombre %></div>
+                    <% if(usuario.fechaNacimiento != -1){ %>
                     <div> <%= usuario.fechaNacimiento %> años</div>
+                    <% } %>
                     <div>Hombre </div>
                     <div> <%= usuario.puntos %> puntos</div>
                 </div>
@@ -38,6 +42,20 @@
             <% if(usuario.puntos >= 50){ %>
                 <div class="Boton"> <a href="/formulario" class="modificar">SubirFoto</a></div>
                 <% } %>
+
+            <div class="Boton"> 
+                <a href="/formulario" class="modificar">Modificar perfil</a>
+            </div>
+
+            <div class="tuperfil">
+                    <h1>Fotos subidas</h1>
+            </div>
+
+            <% fotosSubidas.forEach(f =>{ %>
+                <div class="f">
+                    <img src="/imagen/<%= f %>" alt="" class="subidas">
+                </div>
+            <% }); %>
         </div>
     </body>
 
