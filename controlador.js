@@ -318,7 +318,8 @@ function adminQuestions(request, response) {
                                 else {
                                     var lista1 = lista.filter(onlyUnique);
                                     var i = _.findIndex(lista1, n => n.id == request.session.currentUser);
-                                    lista1.splice(i, 1);
+                                    if(i != -1)
+                                        lista1.splice(i, 1);
                                     lista1.forEach((elm, i) => {
                                         var encontrado = ar.some(n => {
                                             if (n.idUsuario2 == elm.id) {
