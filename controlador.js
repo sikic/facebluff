@@ -51,7 +51,7 @@ function perfil(request, response) {
         if (err)
             console.log(err.message);
         else {
-
+            request.session.fotoPerfil = resultado.fotoPerfil;
             response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil });
         }
 
@@ -64,6 +64,7 @@ function perfilLogueado(request, response) {
         if (err)
             console.log(err.message);
         else {
+            request.session.fotoPerfil = resultado.fotoPerfil;
             response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil });
         }
 
@@ -132,6 +133,7 @@ function formulario_post(request, response) {
         }
         if (request.file) {
             usuarioNuevo.fotoPerfil = request.file.filename;
+            request.session.foto = request.file.filename;
         }
 
         if (!x) {
