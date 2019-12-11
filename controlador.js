@@ -34,7 +34,7 @@ function mostrarFormulario(request, response) {
     var usuarioLog = true;
     var aux = [];
     if (request.session.currentUser === undefined || request.session.currentUser == -1) usuarioLog = false;
-    response.render("formulario", { usuarioLogeado: usuarioLog, points: request.session.puntos, errores: aux });
+    response.render("formulario", { usuarioLogeado: usuarioLog, p: request.session.puntos, errores: aux, imagen : request.session.fotoPerfil});
 }
 
 function comprobar(request, response, next) {
@@ -51,8 +51,8 @@ function perfil(request, response) {
         if (err)
             console.log(err.message);
         else {
-
-            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil });
+            resultado.id = request.params.id;
+            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil, id : request.session.currentUser, imgLogueado :request.session.fotoPerfil });
         }
 
     });
@@ -64,7 +64,9 @@ function perfilLogueado(request, response) {
         if (err)
             console.log(err.message);
         else {
-            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil });
+            request.session.fotoPerfil = resultado.fotoPerfil;
+            resultado.id =request.session.currentUser;
+            response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil , id : request.session.currentUser,imgLogueado: request.session.fotoPerfil});
         }
 
     });
@@ -160,9 +162,11 @@ function formulario_post(request, response) {
             });
         }
     } else { //hay errores y hay que renderizar la pag de formulario
-        response.render("formulario", { usuarioLogeado: x, points: request.session.puntos, errores: errors });
-
+        let puntos = 0;
+        let imag = 0;
+        response.render("formulario", { usuarioLogeado: x, p: request.session.puntos, errores: errors , imagen: resultado.fotoPerfil });
     }
+
 }
 
 function busqueda(request, response) {
