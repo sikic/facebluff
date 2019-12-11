@@ -372,7 +372,7 @@ function adminQuestions(request, response) {
                                                     }
                                                 });
                                             } else
-                                                lista[i].x = -1;
+                                                lista1[i].x = -1;
                                         }
                                     });
                                     response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista1, id: request.params.id, p: request.session.puntos, imagen: request.session.fotoPerfil })
