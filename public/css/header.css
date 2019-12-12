@@ -48,12 +48,6 @@ header {
     align-items: center;
 }
 
-a {
-    text-decoration: none;
-    color: white;
-    font-size: 1.25em;
-}
-
 a:hover,input[type="submit"]:hover {
     background-color: rgb(66, 6, 177) !important;
     animation: shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
@@ -75,6 +69,9 @@ a:hover,input[type="submit"]:hover {
     }
 }
 a {
+    text-decoration: none;
+    color: white;
+    font-size: 1.25em;
     background-color: rgb(25, 25, 26);
     border: 2px solid white;
     padding: 0.2em;
@@ -91,7 +88,7 @@ span{
 
 .puntacos img{
     width: 60px;
-    border-radius: 150px;
+    border-radius: 100%;
 }
 
 .p{

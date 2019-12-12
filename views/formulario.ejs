@@ -17,7 +17,7 @@
         La informacion introducida en el formulario es incorrecta:
         <ul>
             <% errores.forEach(e=> { %>
-            <li> <i class="icono fas fa-times-circle"></i> <%= e.msg %></li>
+            <li> <i class="icono fas fa-times-circle"></i> <%= e %></li>
             <% }); %>
         </ul>
     </div>
@@ -36,7 +36,7 @@
             </div>
             <div>
                 <% if(usuarioLogeado){ %>
-                <%- include("header",{points : 100}) %>
+                <%- include("header",{points : p , imagen :  imagen}) %>
 
                 <body>
                     <% } else { %>

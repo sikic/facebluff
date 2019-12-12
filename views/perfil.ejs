@@ -14,7 +14,7 @@
 
     <body>
 
-        <%- include("header",{points : usuario.puntos, imagen : usuario.fotoPerfil}) %>
+        <%- include("header",{points : usuario.puntos, imagen :imgLogueado}) %>
         <div class="centro">
             <% if(imagen){ %>
             <div class="tuperfil">
@@ -36,18 +36,22 @@
                 </div>
                 <% } %>
             </div>
+            <% if(id == usuario.id){ %>
+            <div class="Boton"> <a href="/formulario" class="modificar">Modificar perfil</a></div>
+            <% } %>
+            <% if(usuario.puntos >= 100){ %>
+                <div class="Boton"> <a href="/procesarSubir" class="modificar">Subir Foto</a></div>
+                <% } %>
 
-            <div class="Boton"> 
-                <a href="/formulario" class="modificar">Modificar perfil</a>
-            </div>
-
-            <div class="tuperfil">
+            <% if(fotosSubidas.length != 0){ %>
+            <div class="tuperfil c">
                     <h1>Fotos subidas</h1>
             </div>
+            <% } %>
 
             <% fotosSubidas.forEach(f =>{ %>
                 <div class="f">
-                    <img src="/imagen/<%= f %>" alt="" class="subidas">
+                    <img src="/imagen/<%= f.foto %>" alt="" class="subidas">
                 </div>
             <% }); %>
         </div>
