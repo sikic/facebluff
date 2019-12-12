@@ -104,8 +104,9 @@ function adivina(request, response, next) {
                     modUser.getDataUser(idUsuario, function (err, datos) {
                         if (err)
                             next();
-                        else
+                        else {
                             response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre, id: idPregunta, idUser: idUsuario, p: request.session.puntos, imagen: request.session.fotoPerfil });
+                        }
                     });
                 }
             });
@@ -126,7 +127,24 @@ function anadircuaternaria(request, response, next) {
             next();
         }
         else {
-            response.redirect("/administrarPreguntas/" + request.params.id);
+            modReply.adivinar(idPregunta, request.session.currentUser, function (err, ar) {
+                if (err)
+                    next();
+                else {
+                    var i =_.findIndex(ar, n => n.idUsuario2 == idUsuario);
+                    if (ar[i].respuestaReal == idRespuesta) {
+                        request.session.puntos += 50;
+                        modUser.updatePoints(request.session.currentUser, request.session.puntos, function (err, res) {
+                            if (err)
+                                next();
+                                else{
+                                    response.redirect("/administrarPreguntas/" + request.params.id);
+                                }
+                        });
+                    }
+                }
+            });
+            
         }
     });
 }
@@ -151,7 +169,7 @@ function perfil(request, response, next) {
                 if (err)
                     next();
                 else
-                    response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil, id: request.params.id, imgLogueado: request.session.fotoPerfil, fotosSubidas: res });
+                    response.render("perfil", { usuario: resultado, p: request.session.puntos, imagen: resultado.fotoPerfil, id: request.params.id, imgLogueado: request.session.fotoPerfil, fotosSubidas: res });
             });
         }
 
@@ -172,7 +190,7 @@ function perfilLogueado(request, response, next) {
                 if (err)
                     next();
                 else
-                    response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil, id: request.session.currentUser, imgLogueado: request.session.fotoPerfil, fotosSubidas: res });
+                    response.render("perfil", { usuario: resultado, p: request.session.puntos, imagen: resultado.fotoPerfil, id: request.session.currentUser, imgLogueado: request.session.fotoPerfil, fotosSubidas: res });
             });
 
         }
@@ -335,19 +353,23 @@ function adminQuestions(request, response, next) {
                                         else {
                                             if (ar[i].miRespuesta == ar[i].respuestaReal) {// las respuesta coinciden por lo tanto he acertao
                                                 lista1[i].x = 1;
-                                                let v = request.session.puntos + 50;
-                                                modUser.updatePoints(request.session.currentUser, v, function (err, res) {
-                                                    if (err)
-                                                        next();
-                                                    else {
-                                                        request.session.puntos = v;
-                                                    }
-                                                });
+                                                // let v = request.session.puntos + 50;
+                                                // request.session.puntos = v;
+                                                // modUser.updatePoints(request.session.currentUser, request.session.puntos, function (err, res) {
+                                                //     if (err)
+                                                //         next();
+                                                //     else {
+                                                //         console.log("emtra");
+                                                //         // request.session.puntos = v;
+
+                                                //     }
+                                                // });
                                             } else
                                                 lista1[i].x = -1;
                                         }
                                     });
                                     response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista1, id: request.params.id, p: request.session.puntos, imagen: request.session.fotoPerfil })
+                                    console.log(request.session.puntos);
                                 }
                             });
                         }
