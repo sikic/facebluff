@@ -14,7 +14,7 @@
 
     <body>
 
-        <%- include("header",{points : usuario.puntos, imagen :imgLogueado}) %>
+        <%- include("header",{points : p, imagen :imgLogueado}) %>
         <div class="centro">
             <% if(imagen){ %>
             <div class="tuperfil">
@@ -39,7 +39,7 @@
             <% if(id == usuario.id){ %>
             <div class="Boton"> <a href="/formulario" class="modificar">Modificar perfil</a></div>
             <% } %>
-            <% if(usuario.puntos >= 100){ %>
+            <% if(usuario.puntos >= 100 && imgLogueado == usuario.fotoPerfil){ %>
                 <div class="Boton"> <a href="/procesarSubir" class="modificar">Subir Foto</a></div>
                 <% } %>
 
