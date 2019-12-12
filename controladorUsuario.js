@@ -15,6 +15,7 @@ const modRequest = new modeloSolicitudes(pool);
 const modFriend = new modeloAmigos(pool);
 const modReply = new modeloRespuestas(pool);
 const modAsk = new modeloPreguntas(pool);
+const path = require("path");
 
 
 
@@ -435,7 +436,7 @@ function formulario_post(request, response, next) {
         }
         else {
             usuarioNuevo.id = request.session.currentUser;
-            modUser.modUserificarUser(usuarioNuevo, function (err, resultado) {
+            modUser.modificarUser(usuarioNuevo, function (err, resultado) {
                 if (err)
                     next();
                 else {
@@ -447,7 +448,7 @@ function formulario_post(request, response, next) {
     } else { //hay errores y hay que renderizar la pag de formulario
         let puntos = 0;
         let imag = 0;
-        response.render("formulario", { usuarioLogeado: x, errores: errors });
+        response.render("formulario", { usuarioLogeado: x, errores: errors, p: request.session.puntos, imagen: request.session.fotoPerfil });
     }
 
 }
@@ -527,7 +528,15 @@ function subirfoto(request, response, next) {
         });
     }
 }
-
+function image (request, response) {
+    let pathImg = path.join(__dirname, "uploads", request.params.id);
+    response.sendFile(pathImg);
+}
+function Error500(error, request, response, next) {
+    // Código 500: Internal server error
+    response.status(500);
+    response.render("error500");
+}
 module.exports = {
     log: login,
     log_post: check,
@@ -552,5 +561,7 @@ module.exports = {
     adminPreguntas: adminQuestions,
     addReply: newReply,
     adivinar: adivina,
-    addCuaternaria: anadircuaternaria
+    addCuaternaria: anadircuaternaria,
+    imagen: image,
+    error500 : Error500
 }
