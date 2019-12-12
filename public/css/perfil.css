@@ -10,13 +10,8 @@ body {
     background-image: url(../img/fondo.jpg);
 }
 
-
 li {
     list-style: none;
-}
-
-li:hover() {
-    background: red;
 }
 
 .centro {
@@ -48,20 +43,11 @@ li:hover() {
     border: 2px solid black;
 }
 
-a {
-    background-color: rgb(25, 25, 26) !important;
-    border: 2px solid white;
-    padding: 0.2em;
-    margin-left: 0.5em;
-}
-
 .Boton {
     display: flex;
     justify-content: center;
     margin-bottom: 2%;
 }
-
-
 
 .usuario {
     font-weight: bold;
@@ -76,6 +62,9 @@ a {
     display: flex;
     justify-content: center;
     margin-bottom: 2%;
+}
+.c{
+    margin-top: 3%;
 }
 .subidas{
     width: 300px;

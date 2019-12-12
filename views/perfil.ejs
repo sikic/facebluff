@@ -43,9 +43,11 @@
                 <div class="Boton"> <a href="/procesarSubir" class="modificar">Subir Foto</a></div>
                 <% } %>
 
-            <div class="tuperfil">
+            <% if(fotosSubidas.length != 0){ %>
+            <div class="tuperfil c">
                     <h1>Fotos subidas</h1>
             </div>
+            <% } %>
 
             <% fotosSubidas.forEach(f =>{ %>
                 <div class="f">
