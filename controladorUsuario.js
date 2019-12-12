@@ -324,7 +324,7 @@ function adminQuestions(request, response, next) {
                         respondido = true;
                     }
                     //cogemos los amigos que hayan respondido a esas preguntas
-                    modFriend.getUsersToQuestion(request.params.id, function (err, lista) {
+                    modFriend.getUsersToQuestion(request.params.id,request.session.currentUser,function (err, lista) {
                         if (err)
                             next();
                         else { //si que hay amigos que han contestado esa pregunta
@@ -511,7 +511,7 @@ function mostrarsubir(request, response) {
 
 //procesamiento de la subida de la foto
 function subirfoto(request, response, next) {
-    if (request.file) {
+    if (request.file){
         var foto = request.file.filename;
         modUser.addFotoUsuario(request.session.currentUser, foto, function (err) {
             if (err)

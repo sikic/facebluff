@@ -68,13 +68,13 @@ class modeloFriends {
     }
 
     //funcion que devuelve los amigos que han respondido a una pregunta x
-    getUsersToQuestion(idPregunta, callback) {
+    getUsersToQuestion(idPregunta,id, callback) {
         this.pool.getConnection(function (err, connection) {
             if (err)
                 callback(err, null);
             else {
-                var sql = "SELECT DISTINCT us.nombre,us.fotoPerfil,us.id FROM usuario_pregunta_respuesta u INNER JOIN amigos a ON a.usuario2 = u.idUsuario INNER JOIN usuarios us ON a.usuario2 = us.id WHERE u.idPregunta = ?";
-                var params = idPregunta;
+                var sql = "SELECT DISTINCT us.nombre,us.fotoPerfil,us.id FROM usuario_pregunta_respuesta u INNER JOIN amigos a ON a.usuario2 = u.idUsuario INNER JOIN usuarios us ON a.usuario2 = us.id WHERE u.idPregunta = ? AND a.usuario1 = ?";
+                var params = [idPregunta,id];
                 connection.query(sql, params, function (err, resultado) {
                     connection.release();
                     if (err)
