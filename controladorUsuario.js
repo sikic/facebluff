@@ -65,7 +65,7 @@ function newReply(request, response, next) {
             else {
                 modReply.addReplytoTable(request.session.currentUser, request.params.id, resultado, function (err) {
                     if (err)
-                        console.log(err);
+                        next();
                     else
                         response.redirect("/preguntas");
                 });
@@ -142,6 +142,8 @@ function anadircuaternaria(request, response, next) {
                                 }
                         });
                     }
+                    else
+                    response.redirect("/administrarPreguntas/" + request.params.id);
                 }
             });
             
@@ -169,7 +171,8 @@ function perfil(request, response, next) {
                 if (err)
                     next();
                 else
-                    response.render("perfil", { usuario: resultado, p: request.session.puntos, imagen: resultado.fotoPerfil, id: request.params.id, imgLogueado: request.session.fotoPerfil, fotosSubidas: res });
+                    resultado.id= request.params.id;
+                    response.render("perfil", { usuario: resultado, p: request.session.puntos, imagen: resultado.fotoPerfil, id: request.session.currentUser, imgLogueado: request.session.fotoPerfil, fotosSubidas: res });
             });
         }
 
@@ -351,25 +354,18 @@ function adminQuestions(request, response, next) {
                                         if (!encontrado) //no lo ha encontrado por lo tanto aun esta sin intentar adivinar
                                             lista1[i].x = 0;
                                         else {
+                                            if(ar[i] !== undefined){
                                             if (ar[i].miRespuesta == ar[i].respuestaReal) {// las respuesta coinciden por lo tanto he acertao
                                                 lista1[i].x = 1;
-                                                // let v = request.session.puntos + 50;
-                                                // request.session.puntos = v;
-                                                // modUser.updatePoints(request.session.currentUser, request.session.puntos, function (err, res) {
-                                                //     if (err)
-                                                //         next();
-                                                //     else {
-                                                //         console.log("emtra");
-                                                //         // request.session.puntos = v;
-
-                                                //     }
-                                                // });
                                             } else
                                                 lista1[i].x = -1;
                                         }
+                                        else
+                                        lista1[i].x = 1;
+                                    }
+                                    
                                     });
                                     response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista1, id: request.params.id, p: request.session.puntos, imagen: request.session.fotoPerfil })
-                                    console.log(request.session.puntos);
                                 }
                             });
                         }
@@ -518,13 +514,15 @@ function subirfoto(request, response, next) {
                 next();
             else {
                 let s = request.session.puntos - 100;
+
                 modUser.updatePoints(request.session.currentUser, s, function (err, res) {
                     if (err)
                         next();
                     else
                         request.session.puntos = s;
+                        response.redirect("/perfil");
                 });
-                response.redirect("/perfil");
+                
             }
         });
     }
@@ -545,7 +543,6 @@ module.exports = {
     mostrarform: mostrarFormulario,
     mostrarPerfil: perfil,
     mostrarPerfilLogueado: perfilLogueado,
-    mostrarPerfil: perfil,
     mostrarSubir: mostrarsubir,
     subirFoto: subirfoto,
     preguntasAleatorias: preguntasRandom,
