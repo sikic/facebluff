@@ -44,15 +44,15 @@ app.use(miRouterRespuestas);
 //Usamos el router de Preguntas
 app.use(miRouterPreguntas);
 //error505
-app.use(error500);
-//vista de perfil
+app.use(controlador.error500);
+//logueado
 app.use(controlador.estaLogeado);
+//eror404
+app.use(controlador.error404);
 
-function error500(error, request, response, next) {
-    // Código 500: Internal server error
-    response.status(500);
-    response.render("error500");
-}
+
+
+
 
 app.listen(config.port, function (err) {
     if (err) {
