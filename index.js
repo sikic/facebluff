@@ -1,16 +1,16 @@
 const express = require("express");
 const path = require("path");
-const fs = require("fs");
 const config = require("./config");
 const mysql = require("mysql");
-const pool = mysql.createPool(config.mysqlConfig);
 const bodyParser = require("body-parser");
 const app = express();
-const controlador = require("./controlador");
+const controlador = require("./controladorUsuario");
 const ficherosEstaticos = path.join(__dirname, "public");
 const session = require('express-session');
-const expressValidator = require("express-validator");
-const miRouter1 = require("./router1");
+const miRouterUsuarios = require("./routerUsuarios");
+const miRouterPreguntas = require("./routerPreguntas");
+const miRouterRespuestas = require("./routerRespuestas");
+
 
 //sesiones
 const mysqlSession = require("express-mysql-session");
@@ -37,29 +37,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //middleware estatico
 app.use(express.static(ficherosEstaticos));
-
-
-//Usamos el router1(Apartado 1 de la practica)
-app.use(miRouter1);
+//Usamos el router de Usuarios
+app.use(miRouterUsuarios);
+//Usamos el router de Respuestas
+app.use(miRouterRespuestas);
+//Usamos el router de Preguntas
+app.use(miRouterPreguntas);
 //error505
-//app.use(error500);
+app.use(error500);
 //vista de perfil
 app.use(controlador.estaLogeado);
-
-
-app.get("/preguntas", controlador.preguntasAleatorias);
-app.get("/newReply/:id", controlador.addReply);
-app.get("/viewQuestion/:id", controlador.verPregunta);
-app.get("/newQuestion", controlador.newQuestion);
-app.get("/procesarNewQuestion", controlador.procesarNewQuestion);
-app.get("/administrarPreguntas/:id", controlador.adminPreguntas);
-app.get("/adivinarRespuesta/:id", controlador.adivinar);
-app.get("/newReplyToUser/:id", controlador.addCuaternaria);
-
-
-app.get("/procesarSubir", controlador.mostrarSubir);
-
-
 
 function error500(error, request, response, next) {
     // Código 500: Internal server error
@@ -67,7 +54,7 @@ function error500(error, request, response, next) {
     response.render("error500");
 }
 
-app.listen(3000, function (err) {
+app.listen(config.port, function (err) {
     if (err) {
         console.error("No se pudo inicializar el servidor: "
             + err.message);
