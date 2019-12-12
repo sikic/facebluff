@@ -31,6 +31,7 @@ router1.get("/aceptar/:id", controlador.aceptar_Amistad);
 router1.get("/rechazar/:id", controlador.rechazar_Amistad);
 //Imagenes
 router1.get("/procesarSubir", controlador.mostrarSubir);
+router1.post("/GuardarFoto",multerFactory.single("foto"),controlador.subirFoto);
 router1.get("/imagen/:id", function (request, response) {
     let pathImg = path.join(__dirname, "uploads", request.params.id);
     response.sendFile(pathImg);
