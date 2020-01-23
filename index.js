@@ -48,6 +48,21 @@ app.use(error500);
 //vista de perfil
 app.use(controlador.estaLogeado);
 
+
+app.get("/preguntas", controlador.preguntasAleatorias);
+app.get("/newReply/:id", controlador.addReply);
+app.get("/viewQuestion/:id", controlador.verPregunta);
+app.get("/newQuestion", controlador.newQuestion);
+app.get("/procesarNewQuestion", controlador.procesarNewQuestion);
+app.get("/administrarPreguntas/:id", controlador.adminPreguntas);
+app.get("/adivinarRespuesta/:id", controlador.adivinar);
+app.get("/newReplyToUser/:id", controlador.addCuaternaria);
+
+
+//app.get("/procesarSubir", controlador.mostrarSubir);
+
+
+
 function error500(error, request, response, next) {
     // Código 500: Internal server error
     response.status(500);

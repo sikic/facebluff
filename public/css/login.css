@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Patrick+Hand&display=swap');
 * {
-     /* border: 1px solid red;      */
+      /* border: 1px solid red;      */
     margin: 0;
     padding: 0;
     font-family: 'Patrick Hand', cursive;
@@ -128,3 +128,22 @@ input[type="submit"]:hover{
     animation: shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
     transform: translate3d(0, 0, 0);
 }
+
+h1:active {
+    animation-duration: 3s;
+    animation-name: slidein;
+  }
+  
+  @keyframes slidein {
+    from {
+      margin-left: 100%;
+      margin-top: 100%;
+      width: 100%
+    }
+  
+    to {
+      margin-left: 0%;
+      margin-top: 0%;
+      width: 12%;
+    }
+  }

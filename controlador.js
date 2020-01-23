@@ -5,18 +5,18 @@ const mysql = require("mysql");
 const config = require("./config");
 const pool = mysql.createPool(config.mysqlConfig);
 //creacion de obj para validacion de formularios
-const { validationResult } = require("express-validator");
+const expressValidator = require("express-validator");
 const mod = new modelo(pool);
-let _ = require("underscore");
 
 function login(request, response) {
-    response.render("login", { message: null, points: request.session.puntos });
+    response.render("login", { message: null });
 }
+
 function amigos(request, response) {
 
     mod.getSolicitudes(request.session.currentUser, function (err, resultado) {
         if (err)
-            next();
+            console.log(err.message);
         else {
             mod.getFriends(request.session.currentUser, function (err, amistades) {
                 if (err)
@@ -24,7 +24,7 @@ function amigos(request, response) {
                 else {
                     console.log(amistades);
                     console.log(resultado);
-                    response.render("amigos", { usuarios: resultado, amigos: amistades, p: request.session.puntos, imagen: request.session.fotoPerfil });
+                    response.render("amigos", { usuarios: resultado, amigos: amistades });
                 }
             });
         }
@@ -32,9 +32,12 @@ function amigos(request, response) {
 }
 function mostrarFormulario(request, response) {
     var usuarioLog = true;
-    var aux = [];
     if (request.session.currentUser === undefined || request.session.currentUser == -1) usuarioLog = false;
+<<<<<<< Updated upstream
     response.render("formulario", { usuarioLogeado: usuarioLog, points: request.session.puntos, errores: aux });
+=======
+    response.render("formulario", { usuarioLogeado: usuarioLog });
+>>>>>>> Stashed changes
 }
 
 function comprobar(request, response, next) {
@@ -51,15 +54,21 @@ function perfil(request, response) {
         if (err)
             console.log(err.message);
         else {
+<<<<<<< Updated upstream
             var f = [];
             f.push("5f83968a124d27c82c0c16d6ee84c8cd");
             f.push("6cfe5518a8e8e76f1d01216fc76511ea");
             response.render("perfil", { usuario: resultado, points: request.session.puntos, imagen: resultado.fotoPerfil, fotosSubidas: f });
+=======
+            console.log(resultado);
+            response.render("perfil", { usuario: resultado });
+>>>>>>> Stashed changes
         }
 
     });
 
 }
+<<<<<<< Updated upstream
 function perfilLogueado(request, response) {
 
     mod.getDataUser(request.session.currentUser, function (err, resultado) {
@@ -75,6 +84,20 @@ function perfilLogueado(request, response) {
 
     });
 
+=======
+function perfilLogueado(request,response){
+    
+        mod.getDataUser(request.session.currentUser,function(err,resultado){
+            if(err)
+                console.log(err.message);
+            else{
+                console.log(resultado);
+                response.render("perfil",{usuario : resultado} );
+            }
+    
+        });
+    
+>>>>>>> Stashed changes
 }
 
 function salir(request, response) {
@@ -83,7 +106,6 @@ function salir(request, response) {
 }
 
 function check(request, response) {
-
     let usuario = {
         email: request.body.email,
         password: request.body.contraseña
@@ -97,8 +119,6 @@ function check(request, response) {
             if (resultado != null) {
                 response.status(200);
                 request.session.currentUser = resultado.id;
-                request.session.puntos = resultado.puntos;
-                request.session.fotoPerfil = resultado.fotoPerfil;
                 response.redirect("/perfil/" + resultado.id);
             }
             else {
@@ -120,21 +140,11 @@ function e404(request, response, next) {
     });
 }
 
-function isEmpty(value) {
-    return values.length == 0;
-}
-
-function min(value, size) {
-    return value.length < size;
-}
 function formulario_post(request, response) {
-    const errors = [];
-    if (isEmpty(request.body.email))
-        errors.add("El email no puede estar vacio");
 
-    if (isEmpty(request.body.nombre))
-        errors.add("El nombre no puede estar vacio");
+    // request.checkBody("email", "Falta rellenar el email").notEmpty();
 
+<<<<<<< Updated upstream
     if(isEmpty(request.body.nombre))
         errors.add("El nombre no puede estar vacio");
         
@@ -188,17 +198,56 @@ function formulario_post(request, response) {
     } else { //hay errores y hay que renderizar la pag de formulario
         response.render("formulario", { usuarioLogeado: x, points: request.session.puntos, errores: errors });
 
+=======
+    let usuarioNuevo = {
+        nombre: request.body.nombre,
+        email: request.body.email,
+        contraseña: request.body.contraseña,
+        fechaNacimiento: request.body.fechaNacimiento,
+        sexo: request.body.s,
+        fotoPerfil: request.body.fotoPerfil,
+        puntos: 0
+    }
+
+    if (request.session.currentUser === undefined || request.session.currentUser == -1) {
+        mod.insertUser(usuarioNuevo, function (err, resultado) {
+            if (err)
+                console.log(err.message);
+            else {
+                response.status(200);
+                request.session.currentUser = resultado;
+                response.redirect("/perfil");
+            }
+        });
+    }
+    else {
+        //
+        usuarioNuevo.id = request.session.currentUser;
+        mod.modificarUser(usuarioNuevo, function (err, resultado) {
+            if (err)
+                console.log(err.message);
+            else {
+                response.status(200);
+                response.redirect("/perfil");
+            }
+        });
+>>>>>>> Stashed changes
     }
 }
 
 function busqueda(request, response) {
+    console.log(request.query.busqueda);
     mod.search(request.query.busqueda, function (err, resultado) {
         if (err)
             console.log(err.message);
         else {
+<<<<<<< Updated upstream
             var i = _.findIndex(resultado, n => n.id == request.session.currentUser);
             resultado.splice(i, 1);
             response.render("busqueda", { usuarios: resultado, cad: request.query.busqueda, p: request.session.puntos, imagen: request.session.fotoPerfil });
+=======
+            response.render("busqueda", { usuarios: resultado, cad: request.query.busqueda });
+>>>>>>> Stashed changes
         }
     });
 }
@@ -228,6 +277,7 @@ function rechazarAmistad(request, response) {
         if (err)
             console.log(err.message);
         else {
+            console.log("rechazada");
             response.redirect("/amigos");
         }
     });
@@ -238,7 +288,7 @@ function preguntasRandom(request, response) {
         if (err)
             console.log(err.message);
         else {
-            response.render("listadoPreguntas", { preguntas: resultado, p: request.session.puntos, imagen: request.session.fotoPerfil });
+            response.render("listadoPreguntas", { preguntas: resultado });
         }
     });
 }
@@ -252,7 +302,7 @@ function viewQuestion(request, response) {
                 if (err)
                     console.log(err.message);
                 else
-                    response.render("responderAmi", { pregunta: descripcion, respuestas: resultado, idPregunta: request.params.id, p: request.session.puntos, imagen: request.session.fotoPerfil });
+                    response.render("responderAmi", { pregunta: descripcion, respuestas: resultado, idPregunta: request.params.id });
             });
         }
     });
@@ -293,7 +343,7 @@ function newReply(request, response) {
 }
 
 function showNewQuestion(request, response) {
-    response.render("nuevaPregunta", { p: request.session.puntos, imagen: request.session.fotoPerfil });
+    response.render("nuevaPregunta");
 }
 
 function newQuestion(request, response) {
@@ -334,11 +384,7 @@ function adminQuestions(request, response) {
                                 if (err)
                                     console.log(err.message);
                                 else {
-                                    var lista1 = lista.filter(onlyUnique);
-                                    var i = _.findIndex(lista1, n => n.id == request.session.currentUser);
-                                    if (i != -1)
-                                        lista1.splice(i, 1);
-                                    lista1.forEach((elm, i) => {
+                                    lista.forEach((elm, i) => {
                                         var encontrado = ar.some(n => {
                                             if (n.idUsuario2 == elm.id) {
                                                 return true;
@@ -347,17 +393,21 @@ function adminQuestions(request, response) {
 
                                         });
                                         if (!encontrado) //no lo ha encontrado por lo tanto aun esta sin intentar adivinar
-                                            lista1[i].x = 0;
+                                            lista[i].x = 0;
                                         else {
                                             if (ar[i].miRespuesta == ar[i].respuestaReal) {// las respuesta coinciden por lo tanto he acertao
+<<<<<<< Updated upstream
                                                 lista1[i].x = 1;
                                                 //llamar a modelo que te haga un update de los puntos pasandole un id--> current user
                                                 //y los puntos + 50
+=======
+                                                lista[i].x = 1;
+>>>>>>> Stashed changes
                                             } else
-                                                lista1[i].x = -1;
+                                                lista[i].x = -1;
                                         }
                                     });
-                                    response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista1, id: request.params.id, p: request.session.puntos, imagen: request.session.fotoPerfil })
+                                    response.render("vistaPregunta", { pregunta: descripcion, contestado: respondido, amigos: lista, id: request.params.id })
                                 }
                             });
                         }
@@ -366,9 +416,6 @@ function adminQuestions(request, response) {
             });
         }
     });
-}
-function onlyUnique(value, index, self) {
-    return self.indexOf(value) === index;
 }
 
 function adivina(request, response) {
@@ -389,7 +436,7 @@ function adivina(request, response) {
                         if (err)
                             console.log(err.message);
                         else
-                            response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre, id: idPregunta, idUser: idUsuario, p: request.session.puntos, imagen: request.session.fotoPerfil });
+                            response.render("adivinar", { pregunta: descripcion, respuestas: resultado, nombre: datos.nombre,id:idPregunta });
                     });
                 }
             });
@@ -398,11 +445,7 @@ function adivina(request, response) {
 }
 
 function anadircuaternaria(request, response) {
-    var frase = request.query.pregunta.split("/");
-    var idUsuario = frase[2];
-    var idPregunta = request.params.id;
-    var idRespuesta = frase[1];
-
+    request.body.radio;
     //añadimos que el usuario actual a respondido sobre otro usuario    
     mod.addReplytoCuaternaria(request.session.currentUser, idUsuario, idPregunta, idRespuesta, function (err, resultado) {
         if (err) {
@@ -413,7 +456,10 @@ function anadircuaternaria(request, response) {
         }
     });
 }
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 module.exports = {
     log: login,
     log_post: check,
@@ -430,14 +476,18 @@ module.exports = {
     mostrarform: mostrarFormulario,
     verPregunta: viewQuestion,
     addReply: newReply,
-    newQuestion: showNewQuestion,
-    procesarNewQuestion: newQuestion,
-    mostrarPerfil: perfil,
-    mostrarPerfilLogueado: perfilLogueado,
+    newQuestion : showNewQuestion,
+    procesarNewQuestion:newQuestion,
+    mostrarPerfil : perfil,
+    mostrarPerfilLogueado : perfilLogueado,
     adivinar: adivina,
     newQuestion: showNewQuestion,
     procesarNewQuestion: newQuestion,
     mostrarPerfil: perfil,
     adminPreguntas: adminQuestions,
+<<<<<<< Updated upstream
     addCuaternaria: anadircuaternaria
+=======
+    addCuaternaria: anadircuaternaria  
+>>>>>>> Stashed changes
 }
